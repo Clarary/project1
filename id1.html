@@ -1,0 +1,4863 @@
+﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+<title>高等数学试题库</title>
+<link href="styles/publicDefine.css" rel="stylesheet" type="text/css">
+<link href="styles/index_2.css" rel="stylesheet" type="text/css">
+<script language="javascript" src="js/table.js"></script><script language="javascript" src="js/time.js"></script><script language="vbscript">
+function bytes2BSTR(vIn)
+dim strReturn,i,ThisCharCode,innerCode,Hight8,Low8,NextCharCode
+strReturn=""
+for i=1 to LenB(vIn)
+ThisCharCode=AscB(MidB(vIn,i,1))
+if ThisCharCode<&H80 Then
+strReturn=strReturn & Chr(ThisCharCode)
+else
+NextCharCode=AscB(MidB(vIn,i+1,1))
+strReturn=strReturn&Chr(CLng(ThisCharCode)*&H100+CInt(NextCharCode))
+i=i+1
+end if
+next
+bytes2BSTR=strReturn
+end function
+</script><script language="javascript">
+var FoldersType,ShareType;
+var CType;
+var KnowledgeShowStyle = '2';
+var Library = 1;
+var NowKnowledgeID=0;
+var TitleID = "";
+var NowName;
+var AddType;
+var SaveKindID=0;
+var ObjTemp;
+var type = '';
+var MoveTable;
+var MoveRow;
+var onMouseDown = false;
+var ButtonType = "stzj";
+var CSaveKindID;
+var CopyType;
+var CopySaveKindID;
+$= function (id) { return document.getElementById(id); }
+function getX(obj)
+{
+      return obj.offsetLeft+(obj.offsetParent?getX(obj.offsetParent):obj.x?obj.x:0);    
+}      
+function getY(obj)
+ {    
+      return (obj.offsetParent?obj.offsetTop+getY(obj.offsetParent):obj.y?obj.y:0);    
+} 
+function ShowStyleChange1()
+{
+	if ( !$("Share1").checked && !$("Self1").checked )
+	{
+		$("Share1").checked = true;
+		KnowledgeShowStyle = 0;
+	}
+	if ( $("Share1").checked && !$("Self1").checked )
+	{
+		KnowledgeShowStyle = 0;
+	}
+	if ( !$("Share1").checked && $("Self1").checked )
+	{
+		KnowledgeShowStyle = 1;
+	} 
+	if ( $("Share1").checked && $("Self1").checked )
+	{
+		KnowledgeShowStyle = 2;
+	}
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?ButtonType=" + ButtonType + "&DoType=ChangeShowStyle&CourseID=1&KnowledgeShowStyle=" + KnowledgeShowStyle,false);
+	xmlhttp.send();	
+	if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+	{
+		//var classname = $("KB_0").className;
+		$("KnowledgeBuilding_Content1").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);		
+		//$("KB_0").className = classname;	
+	}
+}
+function ShowStyleChange()
+{
+	if ( !$("Share").checked && !$("Self").checked )
+	{
+		$("Share").checked = true;
+		KnowledgeShowStyle = 0;
+	}
+	if ( $("Share").checked && !$("Self").checked )
+	{
+		KnowledgeShowStyle = 0;
+	}
+	if ( !$("Share").checked && $("Self").checked )
+	{
+		KnowledgeShowStyle = 1;
+	} 
+	if ( $("Share").checked && $("Self").checked )
+	{
+		KnowledgeShowStyle = 2;
+	}
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?ButtonType=" + ButtonType + "&DoType=ChangeShowStyle&CourseID=1&KnowledgeShowStyle=" + KnowledgeShowStyle,false);
+	xmlhttp.send();	
+	if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+	{
+		var classname = $("KB_0").className;
+		$("KnowledgeBuilding_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);		
+		$("KB_0").className = classname;	
+	}
+}
+function TMoveRow1(obj)
+{	
+	if ( onMouseDown == false ) {return;}		
+	if ( MoveRow.rowIndex!=obj.rowIndex )
+	{
+		moveCell(MoveTable,MoveRow.rowIndex,obj.rowIndex);
+		//MoveRow.id = MoveRow.rowIndex ;
+	}		
+	$("KnowledgeTemple_Content_1").style.cursor = "default";
+	onMouseDown = false;
+}
+function TMoveRow2(obj)
+{	
+	if ( onMouseDown == false ) {return;}		
+	if ( MoveRow.rowIndex!=obj.rowIndex )
+	{
+		moveCell(MoveTable,MoveRow.rowIndex,obj.rowIndex);
+		//MoveRow.id = MoveRow.rowIndex ;
+	}		
+	$("KnowledgeTemple_Content_1").style.cursor = "default";
+	onMouseDown = false;
+}
+function TMoveRow(obj)
+{	
+	if ( onMouseDown == false || ButtonType != "kdsz" ) {return;}
+	if ( MoveTable.id == obj.parentNode.parentNode.id )
+	{
+		if ( MoveRow.rowIndex!=obj.rowIndex )
+		{			
+			var MRrowIndex = MoveRow.rowIndex;
+			moveCell(MoveTable,MoveRow.rowIndex,obj.rowIndex);			
+			if ( MoveTable.rows[MRrowIndex+1].id.indexOf("Next")>=0 )
+			{
+				moveCell(MoveTable,MRrowIndex+1,MoveRow.rowIndex+1);
+			}
+			var sDefine = 1;
+			for (i=0;i<MoveTable.rows.length;i++)
+			{
+				if ( MoveTable.rows[i].id.indexOf("Next")<0 )
+				{
+					var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+					xmlhttp.open("GET","knowledge.asp?DoType=ChangeSortDefine&KnowledgeID="+MoveTable.rows[i].id.substring(3,MoveTable.rows[i].id.length)+"&SortDefine="+sDefine,false);
+					xmlhttp.send();
+					sDefine++;
+				}
+			}
+			
+		}
+	}
+	else
+	{
+		alert('请在同级间进行移动！')
+	}
+	$("KnowledgeBuilding_Content").style.cursor = "default";
+	onMouseDown = false;
+}
+function ShowRight(WinName,obj,ShareT)
+{
+	if ( ButtonType != "kdsz" ) { return;}
+	if ( WinName.id == "KWindow_0" && ($("KWindow").style.display == "block" || $("KWindowz").style.display == "block"))
+	{
+		return;
+	}	
+	if ( ShareT != null ) { ShareType = ShareT;}
+	if(window.event.button==1)
+	{
+		if ( obj == null ){ return;}
+		if ( obj.parentNode.parentNode )
+		{
+			MoveTable = obj.parentNode.parentNode;
+			MoveRow = obj;
+			onMouseDown = true;
+			$("KnowledgeBuilding_Content").style.cursor = "move";
+		}
+	}
+	if((parseInt(window.event.button)%2) ==0)
+	{	
+		WinName.style.display = "block";
+		var x=document.documentElement.scrollLeft + event.x;
+        var y= event.y;	
+		if( navigator.appVersion.indexOf("MSIE 6.0") >= 0 )
+	   {
+			  y = document.documentElement.scrollTop + y;
+	   }
+		WinName.style.left = x;
+		if ( y > 500 )
+		{
+			y= y - WinName.offsetHeight;
+		}
+		WinName.style.top = y;			
+	}
+	if( WinName.id.indexOf("_")>0 && ($("KWindow").style.display == "block" || $("KWindowz").style.display == "block") && obj != null)
+	{
+		WinName.style.display = "block";
+		var x=getX(obj)+100;
+        var y=getY(obj)+2;
+		if( navigator.appVersion.indexOf("MSIE 6.0") >= 0 )
+	   {
+			  y = document.documentElement.scrollTop + y;
+	   }
+		WinName.style.left = x;
+		WinName.style.top = y;		
+	}
+}
+function ShowNext(KnowledgeID,CourseID)
+{	
+	var NextName = "Next_" + KnowledgeID;
+	var ImgName = "img_" + KnowledgeID;	
+	var TrName = "tr_" + KnowledgeID;
+	if ( !$(ImgName) ) { return false;}
+	if ( $(ImgName).src.indexOf("fclose") > 0 )
+	{
+		$(NextName).style.display = "none";
+		if ( $(ImgName).src.indexOf("fcloses") > 0 )
+		{
+			$(ImgName).src = "images/new/fopens.gif";
+		}
+		else
+		{
+			$(ImgName).src = "images/new/fopen.gif";
+		}
+	}
+	else
+	{
+		$(NextName).style.display = "block";
+		if ( $(ImgName).src.indexOf("fopens") > 0 )
+		{
+			$(ImgName).src = "images/new/fcloses.gif";
+		}
+		else
+		{
+			$(ImgName).src = "images/new/fclose.gif";
+		}
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		if ( $(TrName).cells[1].innerHTML.indexOf("..") >=0 )
+		{
+			xmlhttp.open("GET","knowledge.asp?DoType=CallKnowledgeRightNum&CourseID="+CourseID+"&KnowledgeID="+KnowledgeID,false);
+			xmlhttp.send();
+			$(TrName).cells[1].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}
+		if ( $(NextName).cells[0].innerHTML == "")
+		{			
+			xmlhttp.open("GET","knowledge.asp?ButtonType="+ ButtonType + "&DoType=CallKnowledge&CourseID="+CourseID+"&KnowledgeID="+KnowledgeID,false);
+			xmlhttp.send();
+			$(NextName).cells[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}	
+	}	
+}
+function ChangeBg1(Obj)
+{
+	Obj.cells[0].style.backgroundColor = "#c0dbfa";
+	Obj.cells[1].style.backgroundColor = "#c0dbfa";
+	Obj.cells[2].style.backgroundColor = "#c0dbfa";
+}
+function ChangeBg(Obj)
+{
+	Obj.cells[0].style.backgroundColor = "#c0dbfa";
+	Obj.cells[1].style.backgroundColor = "#c0dbfa";
+	if ( ($("KWindow").style.display == "none" || $("KWindow").style.display == "") && ($("KWindowz").style.display == "none" || $("KWindowz").style.display == ""))
+	{
+		NowKnowledgeID = parseInt(Obj.id.substring(Obj.id.indexOf("_")+1,Obj.length));
+	}
+	if ( $("KWindow").style.display == "block" || $("KWindowz").style.display == "block" )
+	{
+		$("KWindow").style.display = "none"; 
+		$("KWindowz").style.display = "none";
+		$("KWindow_1").style.display = "none";
+	}	
+	$("KWindow_0").style.display = "none";
+}
+function BackBg1(Obj)
+{
+	Obj.cells[0].style.backgroundColor = "";
+	Obj.cells[1].style.backgroundColor = "";
+	Obj.cells[2].style.backgroundColor = "";	
+}
+function BackBg(Obj)
+{
+	Obj.cells[0].style.backgroundColor = "";
+	Obj.cells[1].style.backgroundColor = "";	
+	$("ShowK").style.display = "none";
+}
+function ShowCourse(){
+	var WinName = $("CourseWindow")
+	if ( WinName.style.display == "none" )
+	{
+		WinName.style.display = "block";	
+		var x=getX($("CourseName"))+0;
+		var y=getY($("CourseName"))+5;
+		WinName.style.left = x;
+		WinName.style.top = y;
+	}
+	else
+	{
+		WinName.style.display = "none";
+	}
+}
+function ChangeCWBg(obj){
+	obj.style.backgroundColor = "#005ba6";
+}
+function BackCWBg(obj){
+	obj.style.backgroundColor = "#088dd0";
+}
+function ChangeCourse(course)
+{
+	$("CourseWindow").style.display = "none";
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=ChangeCourse&CourseID="+course,false);
+	xmlhttp.send();	
+	window.location.href = "index.asp";
+}
+var TestLibraryLimit = '0'
+if ( TestLibraryLimit == '' ) { TestLibraryLimit=1;}
+var xmlHTTP
+//建立XMLHTTP对象调用MS的ActiveXObject方法，如果成功（IE浏览器）则使用MS ActiveX实例化创建一个XMLHTTP对象 非IE则转用建立一个本地Javascript对象的XMLHttp对象（此方法确保不同浏览器下对AJAX的支持）
+function createXMLHttp()
+{
+	if(window.XMLHttpRequest)
+	{ // Mozilla 浏览器
+		xmlHTTP = new XMLHttpRequest();
+	}else if (window.ActiveXObject){ // IE 浏览器
+		try{
+			xmlHTTP = new ActiveXObject("Msxml2.XMLHTTP");
+		}catch(e){
+			try{
+				xmlHTTP = new ActiveXObject("Microsoft.XMLHTTP");
+			}catch(e){}
+		}
+	}
+}
+function ChangeNum(KnowledgeID)
+{
+	var KID = KnowledgeID;
+	var trName= "tr_" + KID;
+	var obj=$(trName);	
+	do
+	{
+		trName = "tr_" + KID;		
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","knowledge.asp?DoType=GetKnowledgeNum&KnowledgeID="+KID,false);
+		xmlhttp.send();
+		if ($(trName))
+		{
+			
+			obj = $(trName).cells[0].firstChild;
+			obj.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			if ( ButtonType == "kdjs" )
+			{
+				var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+				xmlhttp.open("GET","knowledge.asp?DoType=GetKnowledgeTypeNum&KnowledgeID="+KID,false);
+				xmlhttp.send();
+				$(trName).cells[1].firstChild.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			}
+			obj = $(trName).parentNode.parentNode;
+			KID = obj.parentNode.parentNode.id;
+		}
+		if ( KID.indexOf("Next") >= 0 ) { KID = KID.substring(5,KID.length);}
+	}while(obj.id!="KB_0");
+}
+function ChangeNote(obj)
+{	
+	if($("KnowledgeDetail").style.display == "block")
+	{
+		window.frames["eWebEditor"].AttachSubmit();
+		obj = $(obj);
+	}
+	if ( obj.value != "" )
+	{		
+		var KnID;
+		if($("KnowledgeDetail").style.display == "none")
+		{
+			KnID = obj.id.substring(obj.id.indexOf("_")+1,obj.id.length);
+		}
+		else
+		{			
+			KnID = $("KnowledgeDetailID").value;
+			HideShow();
+		}
+		createXMLHttp();
+		var send_string="DoType=ChangeNote&KnowledgeNote="+escape(obj.value) + "&KnowledgeID=" + KnID;
+		send_string= encodeURI(send_string);
+		xmlHTTP.open("post","knowledge.asp",false); //传送方式 读取的页面 异步与否
+		xmlHTTP.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		xmlHTTP.send(send_string); //发送		
+		//if(xmlHTTP.readystate==4)
+//		{ // xmlHttp下的readystate方法 4表示传送完毕
+//			if(xmlHTTP.status==200){ // xmlHttp的status方法读取状态（服务器HTTP状态码） 200对应OK 404对应Not Found（未找到）等
+//				if (xmlHTTP.responseText != "")  {	alert(xmlHTTP.responseText);}
+//			}	
+//		}
+	}
+}
+function ChangeKBg(obj)
+{
+	if ( obj.style.color == "#999999" ) { return;}
+	obj.style.backgroundColor = "#0068b7";
+	obj.style.color = "#FFFFFF";
+	if ( obj.parentNode.id.indexOf("_") == -1) {$("KWindow_1").style.display = "none";}
+}
+
+function BackKBg(obj)
+{
+	if ( obj.style.color == "#999999" ) { return;}
+	obj.style.backgroundColor = "#dce6ee";
+	obj.style.color = "#0f3460";
+}
+function EditKnowledge(EType)
+{
+	AddType = EType;
+	if ( EType == "Edit" )
+	{		
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","knowledge.asp?DoType=GetKnowledgeName&KnowledgeID="+NowKnowledgeID,false);
+		xmlhttp.send();		
+		$("KnowledgeName").value = bytes2BSTR(xmlhttp.ResponseBody);
+		$("KDetail").style.display = "block";
+		var x=getX($("KnowledgeBuilding_Content"))+70;
+		var y=getY($("KnowledgeBuilding_Content"))+70;
+		$("KDetail").style.left = x;
+		$("KDetail").style.top = y;
+		$("KWindow").style.display = "none";
+		$("KWindowz").style.display = "none"; 
+		$("KWindow_1").style.display = "none";
+		$("Over").style.height = document.body.offsetHeight;
+		$("Over").style.display = "block";
+		var MaxID = document.getElementsByTagName("select").length;
+		for (i=0;i<MaxID;i++)
+		{
+			document.getElementsByTagName("select")[i].disabled = false;
+		}
+	}
+	//if ( EType == "KeepDelete" )
+//	{
+//		if(window.confirm("确实要删除考点并把试题保留在上一级吗？")){
+//			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+//			xmlhttp.open("GET","knowledge.asp?DoType=KeepDelKnowledge&KnowledgeID="+NowKnowledgeID,false);
+//			xmlhttp.send();
+//			var trname = "tr_" + NowKnowledgeID;
+//			var nextname = "Next_" + NowKnowledgeID;
+//			var obj = $(trname).parentNode.parentNode;
+//			obj.deleteRow($(trname).rowIndex);
+//			if ( $(nextname) )
+//			{
+//				obj.deleteRow($(nextname).rowIndex);
+//			}		
+//			if ( obj.rows.length == 0 )
+//			{
+//				obj.parentNode.parentNode.style.display = "none";
+//			}	
+//			var objid = obj.parentNode.parentNode.id;
+//			objid = objid.substring(objid.indexOf("_")+1,objid.length);
+//			ChangeNum(objid);	
+//		}else{
+//			return;
+//		}
+//	}
+	if ( EType == "Delete" )
+	{
+		if(window.confirm('确实要删除吗？此选择将会删除该考点下的所有试题！')){
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","knowledge.asp?DoType=DelKnowledge&KnowledgeID="+NowKnowledgeID,false);
+			xmlhttp.send();			
+			var trname = "tr_" + NowKnowledgeID;
+			var obj = $(trname).parentNode.parentNode;
+			var nextname = "Next_" + NowKnowledgeID;
+			if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+			{	
+				alert(bytes2BSTR(xmlhttp.ResponseBody));
+				if ( $(nextname) )
+				{
+					xmlhttp.open("GET","knowledge.asp?DoType=CallKnowledge&CourseID=1&KnowledgeID="+NowKnowledgeID,false);
+					xmlhttp.send();
+					$(nextname).cells[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+				}
+				ChangeNum(NowKnowledgeID);				
+			}
+			else
+			{
+				if ( $(trname).cells[0].innerHTML.indexOf("·") < 0 )
+				{
+					obj.deleteRow($(trname).rowIndex+1);
+				}
+				obj.deleteRow($(trname).rowIndex);				
+				if ( obj.rows.length == 0 && obj.id == "KB_0" )
+				{
+					obj.insertRow(0);
+					obj = obj.rows[0];
+					obj.id = "tr_0";					
+					obj.attachEvent("onmouseover",function(){ChangeBg($(obj.id));});
+					var KWindowName;
+					KWindowName = "KWindow_0"; 
+					obj.attachEvent("onmousedown",function(){ShowRight($(KWindowName),$(obj.id));});
+					obj.attachEvent("onmouseout",function(){BackBg($(obj.id));});
+					obj.insertCell(0);
+					obj.cells[0].className = "td1";
+					obj.cells[0].style.color = "#989898";
+					obj.cells[0].innerHTML = '&nbsp;&nbsp;请利用右键完成考点设置和试题建设！';
+					obj.insertCell(1);
+					obj.cells[1].className = "td2";
+					obj.cells[1].innerHTML = "&nbsp;";
+				}
+				else
+				{					
+					var objid;
+					if ( obj.id != "KB_0")	{objid = obj.parentNode.parentNode.parentNode.id;}
+					else {objid = obj.rows[0].id;}
+					objid = objid.substring(objid.indexOf("_")+1,objid.length);
+					ChangeNum(objid);	
+					if ( obj.rows.length == 0 )
+					{
+						obj.parentNode.parentNode.parentNode.parentNode.deleteRow(obj.parentNode.parentNode.rowIndex);	
+					}								
+				}
+			}		
+		}else{
+			return;
+		}
+	}
+	if ( EType == "CopySelf" || EType == "CopyShare" )
+	{
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","knowledge.asp?ButtonType=" + ButtonType + "&DoType=" + EType + "&CourseID=1&KnowledgeID="+NowKnowledgeID,false);
+		xmlhttp.send();
+		var trname = "tr_" + NowKnowledgeID;
+		var obj = $(trname).parentNode.parentNode.parentNode;		
+		obj.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);		
+		if ( $(trname).parentNode.parentNode.id == "KB_0" )
+		{
+			$("KB_0").className = "nonormal";
+		}
+		HideShow();
+	}
+}
+function AddKnowledge(AType,SType)
+{
+	AddType = AType;
+	if ( SType != null ) { ShareType = SType;}	
+	$("KDetail").style.display = "block";
+	var x=getX($("KnowledgeBuilding_Content"))+70;
+	var y=getY($("KnowledgeBuilding_Content"))+70;
+	$("KDetail").style.left = x;
+	$("KDetail").style.top = y;
+	$("KWindow").style.display = "none";
+	$("KWindowz").style.display = "none";  
+	$("KWindow_1").style.display = "none";
+	$("KWindow_0").style.display = "none";
+	$("Over").style.height = document.body.offsetHeight;
+	$("Over").style.display = "block";
+	var MaxID = document.getElementsByTagName("select").length;
+	for (i=0;i<MaxID;i++)
+	{
+		document.getElementsByTagName("select")[i].disabled = true;
+	}
+}
+function AddFolder(AType,SType)
+{
+	AddType = AType;
+	HideWindow();
+	if ( SType != null ) { ShareType = SType;}	
+	$("FDetail").style.display = "block";
+	var x=getX($("KnowledgeBuilding_Content"))+270;
+	var y=getY($("KnowledgeBuilding_Content"))+270;
+	$("FDetail").style.left = x;
+	$("FDetail").style.top = y;
+	$("FWindow").style.display = "none";
+	$("Over").style.height = document.body.offsetHeight;
+	$("Over").style.display = "block";
+	
+	var MaxID = document.getElementsByTagName("select").length;
+	for (i=0;i<MaxID;i++)
+	{
+		document.getElementsByTagName("select")[i].disabled = true;
+	}
+}
+function EditFolder(AType)
+{
+	AddType = AType;
+	if ( AType == "Edit" )
+	{		
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=GetFolderName&SaveKindID="+SaveKindID,false);
+		xmlhttp.send();		
+		$("FolderName").value = bytes2BSTR(xmlhttp.ResponseBody);
+		$("FDetail").style.display = "block";
+		var x=getX($("KnowledgeBuilding_Content"))+270;
+		var y=getY($("KnowledgeBuilding_Content"))+270;
+		$("FDetail").style.left = x;
+		$("FDetail").style.top = y;
+		$("FWindow").style.display = "none";
+		$("Over").style.height = document.body.offsetHeight;
+		$("Over").style.display = "block";
+		var MaxID = document.getElementsByTagName("select").length;
+		for (i=0;i<MaxID;i++)
+		{
+			document.getElementsByTagName("select")[i].disabled = true;
+		}
+	}	
+	if ( AType == "Delete" )
+	{
+		if(window.confirm('确实要删除吗？此选择将会删除该考点下的所有试题！')){
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=DelFolder&SaveKindID="+SaveKindID,false);
+			xmlhttp.send();			
+			var trname = "Foldertr_" + SaveKindID;
+			var obj = $(trname).parentNode.parentNode;
+			var nextname = "FolderNext_" + SaveKindID;			
+			if ( $(nextname) )
+			{
+				obj.deleteRow($(trname).rowIndex+1);
+			}
+			obj.deleteRow($(trname).rowIndex);				
+			if ( obj.rows.length == 0 && obj.id == "Folder_0" )
+			{
+				obj.insertRow(0);
+				obj = obj.rows[0];
+				obj.id = "Foldertr_0";					
+				obj.attachEvent("onmouseover",function(){HideWindow();});
+				obj.attachEvent("onmousedown",function(){ShowRight2('0');});
+				obj.insertCell(0);
+				obj.cells[0].className = "td3";
+				obj.cells[0].style.color = "#989898";
+				obj.cells[0].innerHTML = '&nbsp;&nbsp;请利用右键完成文件夹设置！';
+			}				
+		}else{
+			return;
+		}
+		$("FWindow").style.display = "none";
+	}
+}
+function SaveFolder()
+{
+	if ( $("FolderName").value == "" )
+	{
+		alert('请输入文件夹名称！')
+		return false;
+	}
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=AddSaveKindFolder&AddType="+ AddType +"&SaveKindID="+SaveKindID+"&SaveKindName="+$("FolderName").value + "&CourseID=1&TestModelID=" + Library,false);
+	xmlhttp.send();	
+	if ( AddType == "Edit" )
+	{
+		var trname = "Foldertr_" + SaveKindID;
+		obj = $(trname).cells[0];
+		obj.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		HideShow();
+		return;
+	}	
+	if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+	{
+		var ReturnStr = bytes2BSTR(xmlhttp.ResponseBody);
+		var KID = ReturnStr.split("|")[0];
+		ReturnStr = ReturnStr.split("|")[1];		
+		var trname;
+		var obj;
+		if ( AddType == "First" )
+		{
+			obj = $("Folder_0")
+			if ( obj.rows[0].id == "Foldertr_0" )
+			{
+				obj.deleteRow(0);
+				obj.insertRow(0);
+				obj = obj.rows[0];
+			}
+			else
+			{
+				obj.insertRow(obj.rows.length);
+				obj = obj.rows[obj.rows.length-1];
+			}
+			obj.id = "Foldertr_" + KID;			
+			//obj.title = "鼠标左键拖动排序";			
+			obj.attachEvent("onmouseover",function(){ChangeBg($(obj.id));});
+			//obj.attachEvent("onmousedown",function(){;});		
+			//obj.attachEvent("onmouseup",function(){TMoveRow($(obj.id));});
+			obj.attachEvent("onmouseout",function(){BackBg($(obj.id));});
+			obj.insertCell(0);
+			obj.cells[0].className = "td3";
+			obj.cells[0].innerHTML = ReturnStr;
+			HideShow();
+			return;
+		}
+		if ( AddType == "Same" )
+		{
+			trname = "Foldertr_" + SaveKindID;
+			obj = $(trname).parentNode.parentNode;
+		}
+		else
+		{
+			trname = "Folder_" + SaveKindID;
+			obj = $(trname);
+			if ( !obj )
+			{
+				//var nextname = "FolderNext_" + SaveKindID;
+//				var html;				
+//				if ( $(nextname) )
+//				{					
+//					$(nextname).cells[0].innerHTML = "<table id='Folder_" + SaveKindID  + "' cellspacing='0' cellpadding='0'></table>"
+//				}		
+				trname = "Foldertr_" + SaveKindID;
+				ShowFolder(SaveKindID,$(trname));
+				HideShow();
+				return;
+			}
+		}
+		obj.insertRow(obj.rows.length);
+		obj = obj.rows[obj.rows.length-1];
+		obj.id = "Foldertr_" + KID;			
+		//obj.title = "鼠标左键拖动排序";
+		obj.attachEvent("onmouseover",function(){HideWindow();});
+		obj.attachEvent("onmousedown",function(){ShowRight3(KID);});
+		obj.attachEvent("onclick",function(){ShowFolder(KID,$(obj.id));});		
+//		obj.attachEvent("onmouseup",function(){TMoveRow($(obj.id));});
+		//obj.attachEvent("onmouseout",function(){BackBg($(obj.id));});
+		obj.insertCell(0);
+		obj.cells[0].className = "td3";		
+		obj.cells[0].innerHTML = ReturnStr;
+		var obj1 = obj.parentNode.parentNode;
+		obj1.insertRow(obj1.rows.length);
+		obj1 = obj1.rows[obj1.rows.length-1];
+		obj1.id = "FolderNext_" + KID;
+		obj1.className = "next"
+		obj1.insertCell(0);		
+		obj1.cells[0].innerHTML = "";			
+	}		
+	HideShow();
+}
+function SaveKnowledge()
+{
+	if ( $("KnowledgeName").value == "" )
+	{
+		alert('请输入考点内容！')
+		return false;
+	}
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=AddKnowledge&ShareType="+ ShareType +"&AddType="+ AddType +"&KnowledgeID="+NowKnowledgeID+"&KnowledgeName="+$("KnowledgeName").value + "&CourseID=1",false);
+	xmlhttp.send();	
+	if ( AddType == "Edit" )
+	{
+		var trname = "tr_" + NowKnowledgeID;
+		obj = $(trname).cells[0].firstChild;
+		obj.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		HideShow();
+		return;
+	}
+	if ( ShareType != null && !$(ShareType).checked) { return false;}	
+	if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+	{
+		var ReturnStr = bytes2BSTR(xmlhttp.ResponseBody);
+		var KID = ReturnStr.substring(0,ReturnStr.indexOf(","));
+		var Num = parseInt(ReturnStr.substring(ReturnStr.indexOf(",")+1,ReturnStr.length))-23;
+		var trname;
+		var obj;
+		if ( AddType == "First" )
+		{
+			obj = $("KB_0")
+			if ( obj.rows[0].id == "tr_0" )
+			{
+				obj.deleteRow(0);
+				obj.insertRow(0);
+				obj = obj.rows[0];
+			}
+			else
+			{
+				obj.insertRow(obj.rows.length);
+				obj = obj.rows[obj.rows.length-1];
+			}
+			obj.id = "tr_" + KID;			
+			//obj.title = "鼠标左键拖动排序";			
+			obj.attachEvent("onmouseover",function(){ChangeBg($(obj.id));});
+			var KWindowName;
+			if ( ShareType == "Self" ) { KWindowName = "KWindowz";}
+			else { KWindowName = "KWindow"; }
+			obj.attachEvent("onmousedown",function(){ShowRight($(KWindowName),$(obj.id),ShareType);});		
+			obj.attachEvent("onmouseup",function(){TMoveRow($(obj.id));});
+			obj.attachEvent("onmouseout",function(){BackBg($(obj.id));});
+			obj.insertCell(0);
+			obj.cells[0].className = "td1";
+			if ( ShareType == "Self" )
+			{
+				Num = parseInt(Num) - 13;
+				obj.cells[0].innerHTML = "<div style='margin-left:"+ Num +"px;' class='Ktitlez1'><img src='images/self.png' />·" + $("KnowledgeName").value + "【<a href='javascript:WinOpen("+KID+");'>0</a>】</div>";
+			}
+			else
+			{
+				obj.cells[0].innerHTML = "<div style='margin-left:"+ Num +"px;' class='Ktitle1'>·" + $("KnowledgeName").value + "【<a href='javascript:WinOpen("+KID+");'>0</a>】</div>";
+			}
+			obj.insertCell(1);
+			obj.cells[1].className = "td2";
+			obj.cells[1].innerHTML = "<input id='I_" + KID +"' onBlur='ChangeNote(this)' class='insert' type='text' />";
+			HideShow();
+			return;
+		}
+		if ( AddType == "Same" )
+		{
+			trname = "tr_" + NowKnowledgeID;
+			obj = $(trname).parentNode.parentNode;
+		}
+		else
+		{
+			trname = "KB_" + NowKnowledgeID;
+			obj = $(trname);
+			if ( !obj )
+			{
+				var nextname = "Next_" + NowKnowledgeID;
+				var html;				
+				if ( !$(nextname) )
+				{					
+					trname = "tr_" + NowKnowledgeID;
+					$(trname).attachEvent("onmousedown",function(){ShowNext(NowKnowledgeID,1);});
+					html = $(trname).cells[0].innerHTML;
+					if ( html.indexOf("self") >= 0 || html.indexOf("fopens") >= 0 || html.indexOf("fcloses") >= 0 )
+					{
+						Num = parseInt(Num) - 23;
+						$(trname).cells[0].innerHTML = "<div style='margin-left:" + Num  + "px;' class='Ktitle'><img id='img_" + NowKnowledgeID + "' src='images/new/fopens.gif' />&nbsp;" + html.substring(html.indexOf("·")+1,html.length);
+					}
+					else
+					{
+						Num = parseInt(Num) - 23;
+						$(trname).cells[0].innerHTML = "<div style='margin-left:" + Num + "px;' class='Ktitle'><img id='img_" + NowKnowledgeID + "' src='images/new/fopen.gif' />&nbsp;" + html.substring(html.indexOf("·")+1,html.length);
+					}
+					obj = $(trname).parentNode.parentNode;
+					obj.insertRow($(trname).rowIndex+1);
+					obj = obj.rows[$(trname).rowIndex+1];
+					obj.id = "Next_" + NowKnowledgeID;
+					obj.className = "next"
+					obj.insertCell(0);
+					obj.cells[0].colSpan = 2;
+				}				
+				ShowNext(NowKnowledgeID,1);
+				HideShow();
+				return;
+			}
+		}
+		obj.insertRow(obj.rows.length);
+		obj = obj.rows[obj.rows.length-1];
+		obj.id = "tr_" + KID;			
+		//obj.title = "鼠标左键拖动排序";			
+		obj.attachEvent("onmouseover",function(){ChangeBg($(obj.id));});
+		var KWindowName;
+		if ( ShareType == "Self" ) { KWindowName = "KWindowz";}
+		else { KWindowName = "KWindow"; }
+		obj.attachEvent("onmousedown",function(){ShowRight($(KWindowName),$(obj.id),ShareType);});		
+		obj.attachEvent("onmouseup",function(){TMoveRow($(obj.id));});
+		obj.attachEvent("onmouseout",function(){BackBg($(obj.id));});
+		obj.insertCell(0);
+		obj.cells[0].className = "td1";		
+		if ( ShareType == "Self" )
+		{
+			Num = parseInt(Num) - 13;
+			obj.cells[0].innerHTML = "<div style='margin-left:"+ Num +"px;' class='Ktitlez1'><img src='images/self.png' />·" + $("KnowledgeName").value + "【<a href='javascript:WinOpen("+KID+");'>0</a>】</div>";
+		}
+		else
+		{
+			if ( parseInt(TestLibraryLimit) == "1" )
+			{
+				obj.cells[0].innerHTML = "<div style='margin-left:"+ Num +"px;' class='Ktitle1'>·" + $("KnowledgeName").value + "【<a href='javascript:WinOpen("+KID+");'>0</a>】<span class='red'>(待审核)</span><div>";
+			}
+			else
+			{
+				obj.cells[0].innerHTML = "<div style='margin-left:"+ Num +"px;' class='Ktitle1'>·" + $("KnowledgeName").value + "【<a href='javascript:WinOpen("+KID+");'>0</a>】<span class='red'>(待审核)</span><div>";
+			}
+		}	
+		obj.insertCell(1);
+		obj.cells[1].className = "td2";
+		obj.cells[1].innerHTML = "<input id='I_" + KID +"' onBlur='ChangeNote(this)' class='insert' type='text' />";		
+	}		
+	HideShow();
+}
+function HideShow()
+{
+	$("KnowledgeName").value = "";
+	$("SaveKindName").value = "";
+	$("KDetail").style.display = "none";
+	$("SearchNote").style.display = "none";
+	$("SaveName").style.display = "none";
+	$("FDetail").style.display = "none";
+	$("Over").style.display = "none";
+	$("TitleDetail").style.display = "none";
+	$("KWindow_0").style.display = "none";
+	$("KWindow").style.display = "none"; 
+	$("KWindowz").style.display = "none";
+	$("KWindow_1").style.display = "none";
+	$("KnowledgeDetail").style.display = "none";	
+	var MaxID = document.getElementsByTagName("select").length;
+	for (i=0;i<MaxID;i++)
+	{
+		document.getElementsByTagName("select")[i].disabled = false;
+	}
+}
+function ChangeWidth(obj)
+{
+	if ( obj.id=="WidthImg" )
+	{
+		if ( obj.src.indexOf("right") > 0 )
+		{
+			obj.src = "images/ktopleft.gif";
+			obj.parentNode.nextSibling.width = "606";	
+			$("KB_0").className = "nonormal";	
+		}
+		else
+		{
+			obj.src = "images/ktopright.gif";
+			obj.parentNode.nextSibling.width = "537";
+			$("KB_0").className = "normal";	
+		}
+	}
+	else
+	{
+		if ( obj.src.indexOf("right") > 0 )
+		{
+			obj.src = "images/ktopleft.gif";
+			$("LibraryList").style.width = "377px";
+			$("KBuilding").style.width = "606px";
+		}
+		else
+		{
+			obj.src = "images/ktopright.gif";			
+			$("LibraryList").style.width = "447px";
+			$("KBuilding").style.width = "530px";
+		}
+	}
+}
+function ShowTitleType()
+{
+	$("StyleWindow").style.display = "block";
+	$("Over").style.display = "block";
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=CallTitleType",false);
+	xmlhttp.send();				
+	$("List2").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);	
+}
+var TitleTypeID,TitleTypeType;
+function ExitTitleType()
+{
+	$("TitleType").style.display = "none";
+	$("StyleWindow").style.display = "block";
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=CallTitleType",false);
+	xmlhttp.send();				
+	$("List2").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);	
+}
+function SaveTitleType()
+{
+	if ( $("TitleTypeName").value != "" )
+	{
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","knowledge.asp?DoType=EditTitleType&Type="+TitleTypeType+"&TitleTypeID="+TitleTypeID+"&TitleTypeName="+$("TitleTypeName").value+"&BaseTitleType="+$("BaseTitleType").value+"&OptionsNum="+$("OptionsNum").value+"&AnswerNum="+$("AnswerNum").value,false);
+		xmlhttp.send();	
+		$("TitleType").style.display = "none";
+		$("StyleWindow").style.display = "block";		
+		xmlhttp.open("GET","knowledge.asp?DoType=CallTitleType",false);
+		xmlhttp.send();				
+		$("List2").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);	
+	}
+	else
+	{
+		alert('请输入有效的名称！');
+	}
+}
+function ShowBase(obj)
+{
+	if ( obj.value == "1" )
+	{
+		obj = obj.parentNode.parentNode;
+		obj.childNodes[4].style.display = "block";
+		obj.childNodes[5].style.display = "block";
+		obj.childNodes[6].style.display = "block";
+		obj.childNodes[7].style.display = "block";
+	}
+	else
+	{
+		obj = obj.parentNode.parentNode;
+		obj.childNodes[4].style.display = "none";
+		obj.childNodes[5].style.display = "none";
+		obj.childNodes[6].style.display = "none";
+		obj.childNodes[7].style.display = "none";;
+	}
+}
+function TitleType(Type,TTID)
+{
+	if ( Type == 'Delete' )
+	{
+		if(window.confirm('确实要删除该类型嘛？'))
+		{
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","knowledge.asp?DoType=DelTitleType&TitleTypeID="+TTID,false);
+			xmlhttp.send();
+			alert(bytes2BSTR(xmlhttp.ResponseBody));
+		}
+	}
+	if ( Type == 'Add' || Type == 'Edit' )
+	{
+		$("StyleWindow").style.display = "none";
+		$("TitleType").style.display = "block";
+		$("TitleType").style.left = 250;
+		$("TitleType").style.top = 250;
+		TitleTypeID = TTID;
+		TitleTypeType = Type;
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		if ( TTID != null )
+		{
+			xmlhttp.open("GET","knowledge.asp?DoType=GetTitleType&TitleTypeID="+TTID,false);
+		}
+		else
+		{
+			xmlhttp.open("GET","knowledge.asp?DoType=GetTitleType",false);
+		}
+		xmlhttp.send();		
+		if ( Type == 'Add')
+		{
+			$("TitleType").childNodes[0].childNodes[0].innerHTML = '题型添加';
+		}
+		else
+		{
+			$("TitleType").childNodes[0].childNodes[0].innerHTML = '题型管理';
+		}
+		$("TitleType").childNodes[1].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	}
+	
+}
+var CTime;
+var rownum=0;
+var nownum=0;
+function ShowInnerHTML()
+{
+	if (nownum<$("KB_0").rows.length)
+	{
+		if ($("KB_0").rows[nownum].id.indexOf("tr") >= 0 )
+		{				
+			var KID = $("KB_0").rows[nownum].id.substring(3,$("KB_0").rows[nownum].id.length);
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","knowledge.asp?ButtonType=" + ButtonType + "&DoType=GetKnowledgeInnerHTML&KnowledgeID="+KID,false);
+			xmlhttp.send();		
+			$("KB_0").rows[nownum].cells[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody).split("|SY|")[0];
+			$("KB_0").rows[nownum].cells[1].innerHTML = bytes2BSTR(xmlhttp.ResponseBody).split("|SY|")[1];	
+		}
+	}
+	else
+	{
+		clearInterval(CTime);
+	}
+	nownum++;
+}
+var KnowledgeTableName = "SY_QBKnowledges";
+function OpenAuto(OpenType,SKID)
+{
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=GetAutoSaveKindID&SaveKindID="+SKID,false);
+	xmlhttp.send();	
+	if (OpenType == "Paper")
+	{
+		OpenPaper(bytes2BSTR(xmlhttp.ResponseBody));
+	}
+	else
+	{
+		SaveKindID = bytes2BSTR(xmlhttp.ResponseBody);
+		ChangeButton($("banner").childNodes[0],"stzj");
+	}
+}
+function ChangeButton(obj,text)
+{	
+	for ( i=0; i<$("banner").childNodes.length; i++)
+	{
+		$("banner").childNodes[i].className = "bbutton";
+	}
+	obj.className = "bbuttonc";
+	var obuttontype = ButtonType;
+	ButtonType = text;
+	type = '';
+	if ( text == "kdsz")
+	{
+		KnowledgeTableName = "SY_QBKnowledges";
+		$("Knowledge").style.display = "block";
+		$("LibraryList").style.display = "none";		
+		$("KBuilding").style.display = "none";		
+		$("WidthImg").style.display = "block";
+		$("Library_S").style.display = "none";
+		//$("TestTemple").style.display = "none";
+		$("WidthImg").src = "images/ktopleft.gif";
+		$("WidthImg").parentNode.nextSibling.width = "600";
+		$("KB_0").className = "nonormal";
+		$("TableName").style.textAlign = "center";
+		$("TableName").style.fontSize = "14px";
+		$("TableName").style.fontWeight = "bold";
+		$("TableName").innerHTML = '考点简介';
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");			
+		xmlhttp.open("GET","knowledge.asp?ButtonType=" + ButtonType + "&DoType=CallKnowledge&KnowledgeID=0&CourseID=1",false);
+		xmlhttp.send();	
+		if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+		{				
+			$("KnowledgeBuilding_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}
+		$("KB_0").className = "nonormal";
+		//CTime=setInterval(ShowInnerHTML,10);
+//		rownum=0;
+//  		nownum=0;
+		return;
+	}
+	if ( text == "zsdjs")
+	{
+		KnowledgeTableName = "SY_QBKnowledge";
+		$("Knowledge").style.display = "none";		
+		$("LibraryList").style.display = "block";		
+		$("KBuilding").style.display = "block";
+		$("KnowledgeTemple").style.display = "block";
+		$("KnowledgeBuilding").style.display = "block";
+		$("Library_S").style.display = "none";
+		$("Library").style.display = "none";
+		//$("TestTemple").style.display = "none";
+		$("KnowledgeBuilding_Content").innerHTML = "";
+		$("KnowledgeBuilding").childNodes[0].childNodes[0].style.display = "none";
+		$("KnowledgeBuilding").childNodes[0].childNodes[1].innerHTML = '知识点名称';
+		$("LibraryList").style.width = "377px";
+		$("KBuilding").style.width = "600px";
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");			
+		xmlhttp.open("GET","knowledge.asp?ButtonType=" + ButtonType + "&DoType=CallKnowledge&KnowledgeID=0&CourseID=1&KnowledgeTableName="+KnowledgeTableName,false);
+		xmlhttp.send();	
+		$("KnowledgeBuilding_Content1").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);	
+		return;
+	}
+	if ( text == "kdjs")
+	{
+		KnowledgeTableName = "SY_QBKnowledges";
+		$("Knowledge").style.display = "block";
+		$("LibraryList").style.display = "none";		
+		$("KBuilding").style.display = "none";	
+		$("WidthImg").style.display = "block";
+		$("Library_S").style.display = "none";
+		$("WidthImg").src = "images/ktopleft.gif";
+		//$("TestTemple").style.display = "none";
+		$("WidthImg").parentNode.nextSibling.width = "600";		
+		$("TableName").style.textAlign = "left";		
+		$("TableName").style.fontSize = "12px";
+		$("TableName").style.fontWeight = "100";		
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","knowledge.asp?DoType=ShowTitleType",false);
+		xmlhttp.send();
+		$("TableName").innerHTML = bytes2BSTR(xmlhttp.ResponseBody) + "<span style='float:right;font-weight:100;font-size:12px;'><a href='javascript:void(0)' onclick='ShowTitleType()'>题型管理</a></span>";		
+		xmlhttp.open("GET","knowledge.asp?ButtonType=" + ButtonType + "&DoType=CallKnowledge&KnowledgeID=0&CourseID=1",false);
+		xmlhttp.send();	
+		if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+		{				
+			$("KnowledgeBuilding_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}
+		$("KB_0").className = "nonormal";
+		var obj =$("KnowledgeBuilding_Content1").childNodes[0];
+		for (i=0;i<obj.rows.length;i++)
+		{
+			if ( obj.rows[i].id.indexOf("tr_") >=0 )
+			{
+				$("KB_0").rows[i].cells[0].childNodes[0].innerHTML = obj.rows[i].cells[0].childNodes[0].innerHTML.replace("fclose","fopen");
+				
+			}
+		}
+		CTime=setInterval(ShowInnerHTML,10);
+		rownum=0;
+  		nownum=0;		
+		return;
+	}
+	if ( text == "stzj")
+	{
+		KnowledgeTableName = "SY_QBKnowledges";
+		$("Knowledge").style.display = "none";		
+		$("LibraryList").style.display = "block";		
+		$("KBuilding").style.display = "block";
+		$("KnowledgeTemple").style.display = "block";
+		$("KnowledgeBuilding").style.display = "block";
+		$("Library_S").style.display = "none";
+		$("Library").style.display = "none";
+		$("KnowledgeBuilding_Content").innerHTML = "";
+		$("LibraryList").style.width = "377px";
+		//$("TestTemple").style.display = "none";
+		$("KBuilding").style.width = "600px";
+		$("KnowledgeBuilding").childNodes[0].childNodes[0].style.display = "block";
+		if ((parseInt(4)==4 || parseInt(4)==5) && obuttontype == "gxsj" )
+		{
+			ShowKnowledge(SaveKindID);
+		}	
+		else
+		{
+			$("KnowledgeBuilding").childNodes[0].childNodes[1].innerHTML = '考点名称';	
+		}
+		return;
+	}
+	if ( text == "zxzj")
+	{
+		KnowledgeTableName = "SY_QBKnowledges";
+		$("Knowledge").style.display = "none";		
+		$("LibraryList").style.display = "block";		
+		$("KBuilding").style.display = "block";
+		$("KnowledgeTemple").style.display = "none";
+		//$("TestTemple").style.display = "block";
+		$("KnowledgeBuilding").style.display = "block";
+		$("Library_S").style.display = "none";
+		$("Library").style.display = "none";
+		$("KnowledgeBuilding_Content").innerHTML = "";
+		$("LibraryList").style.width = "377px";
+		$("KBuilding").style.width = "600px";
+		$("KnowledgeBuilding").childNodes[0].childNodes[0].style.display = "block";
+		$("KnowledgeBuilding").childNodes[0].childNodes[1].innerHTML = '考点名称';
+		for ( i=0;i<$("KB_0").rows.length;i++)
+		{
+			if ($("KB_0").rows[i].className != "next")
+			{
+				$("KB_0").rows[i].cells[1].style.display = "none";
+			}
+		}
+		return;
+	}
+	if ( text == "sjgl")
+	{
+		$("Knowledge").childNodes[1].innerHTML = "";
+		$("Knowledge").style.display = "none";		
+		$("LibraryList").style.display = "block";
+		$("KnowledgeBuilding").style.display = "none";
+		$("KBuilding").style.display = "block";
+		//$("TestTemple").style.display = "none";
+		$("KnowledgeTemple").style.display = "block";
+		$("Library").style.display = "block";
+		$("Library_S").style.display = "none";
+		$("LibraryList").style.width = "377px";
+		$("KBuilding").style.width = "600px";
+		
+		DelAllTable(2);
+		if ( $("Library_Content").innerHTML == "" )
+		{	
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=CallFolder&SaveKindID=0&TestModelID="+Library,false);
+			xmlhttp.send();
+			$("Library_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}	
+		if ((parseInt(4)==4 || parseInt(4)==5) && obuttontype == "gxsj" )
+		{
+			if (parseInt(SaveKindID)>0)
+			{
+				ShowKnowledge(SaveKindID);
+			}
+		}
+		return;
+	}
+	if ( text == "gxsj" && parseInt(4) != 4 )
+	{
+		$("Knowledge").childNodes[1].innerHTML = "";
+		$("Knowledge").style.display = "none";		
+		$("LibraryList").style.display = "block";
+		$("KnowledgeBuilding").style.display = "none";
+		$("KBuilding").style.display = "block";
+		$("KnowledgeTemple").style.display = "none";
+		$("Library").style.display = "block";
+		$("Library_S").style.display = "block";
+		//$("TestTemple").style.display = "none";
+		$("LibraryList").style.width = "447px";
+		$("KBuilding").style.width = "530px";
+		type = 'Share'
+		DelAllTable(2);
+		if ( $("Library_Content").innerHTML == "" )
+		{	
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=CallFolder&SaveKindID=0&TestModelID="+Library,false);
+			xmlhttp.send();
+			$("Library_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}
+		if ( $("Library_S_Content").innerHTML == "" )
+		{	
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=CallShareFolder&SaveKindID=0&TestModelID="+Library,false);
+			xmlhttp.send();
+			//alert(bytes2BSTR(xmlhttp.ResponseBody));
+			$("Library_S_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}		
+		return;
+	}
+	if ( text == "gxsj" && parseInt(4) == 4 )
+	{
+		
+		$("KBuilding").style.display = "block";
+		$("KnowledgeTemple").style.display = "none";
+		//$("Library").style.display = "block";
+		$("Library_S").style.display = "block";
+		//$("TestTemple").style.display = "none";
+		$("LibraryList").style.width = "447px";
+		$("KBuilding").style.width = "530px";
+		type = 'Share'
+		DelAllTable(2);		
+		if ( $("Library_S_Content").innerHTML == "" )
+		{	
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=CallShareFolder&SaveKindID=0&TestModelID="+Library,false);
+			xmlhttp.send();
+			//alert(bytes2BSTR(xmlhttp.ResponseBody));
+			$("Library_S_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		}		
+		return;
+	}
+}
+function Choose(TitleInforID)
+{
+	obj = $("TModels");
+	if ( obj.rows[0].cells[0].colSpan == 4 && obj.rows[0].id == "" )
+	{
+		obj.deleteRow(0);
+	}
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=CallTitleInfor&TitleInforID="+TitleInforID,false);
+	xmlhttp.send();
+	var str = bytes2BSTR(xmlhttp.ResponseBody).split("[#SY#]");
+	obj.insertRow(obj.rows.length);
+	obj = obj.rows[obj.rows.length-1];
+	obj.id = TitleInforID;			
+	obj.attachEvent("onmouseover",function(){HideWindow();});
+	obj.attachEvent("onmousedown",function(){ShowRight4($("TWindow1"),obj);});
+	obj.insertCell(0);
+	obj.cells[0].className = "td6";
+	obj.cells[0].style.width = "70%";
+	obj.cells[0].style.borderBottom = "1px solid #9bc6fd";
+	obj.cells[0].style.borderRight = "1px solid #9bc6fd";
+	obj.cells[0].innerHTML = str[0];
+	SYLatexEngine.RenderNode(obj.cells[0]);
+	obj.insertCell(1);
+	obj.cells[1].className = "td5";
+	obj.cells[1].style.width = "10%";	
+	obj.cells[1].style.borderBottom = "1px solid #9bc6fd";
+	obj.cells[1].style.borderRight = "1px solid #9bc6fd";
+	obj.cells[1].innerHTML = str[1];
+	obj.insertCell(2);
+	obj.cells[2].className = "td5";
+	obj.cells[2].style.width = "10%";
+	obj.cells[2].style.borderBottom = "1px solid #9bc6fd";
+	obj.cells[2].style.borderRight = "1px solid #9bc6fd";
+	switch(parseInt(str[2]))
+	{
+		case 1:
+			obj.cells[2].innerHTML = '易';
+			break;
+		case 2:
+			obj.cells[2].innerHTML = '中下';
+			break;
+		case 3:
+			obj.cells[2].innerHTML = '中';
+			break;
+		case 4:
+			obj.cells[2].innerHTML = '中上';
+			break;
+		case 5:
+			obj.cells[2].innerHTML = '难';
+			break;		
+	}
+	obj.insertCell(3);
+	obj.cells[3].className = "td5";
+	obj.cells[3].style.width = "10%";
+	obj.cells[3].style.borderBottom = "1px solid #9bc6fd";
+	obj.cells[3].innerHTML = "<input id='TTitleScroe' name='TTitleScroe' onchange='ChangeScroe();' value ='1' size='2' />";	
+	$("TExamNum").innerHTML = parseInt($("TExamNum").innerHTML) + 1;
+	$("TTotalNum").innerHTML = parseInt($("TTotalNum").innerHTML) + 1;
+	getTLevel();
+}
+function WinOpen(KnowledgeID,TitleTypeID)
+{
+	if ( TitleTypeID == null )
+	{
+		window.open('examlist.asp?KnowledgeID='+KnowledgeID+'&ButtonType='+ButtonType);
+	}
+	else
+	{
+		window.open('examlist.asp?KnowledgeID='+KnowledgeID+'&TitleTypeID='+TitleTypeID+'&ButtonType='+ButtonType);
+	}
+}
+function ShowRight4(WinName,obj)
+{
+	if((parseInt(window.event.button)%2) ==0)
+	{
+		WinName.style.display = "block";
+		var x=document.documentElement.scrollLeft + event.x;
+        var y= event.y;	
+		if( navigator.appVersion.indexOf("MSIE 6.0") >= 0 )
+	   {
+			  y = document.documentElement.scrollTop + y;
+	   }
+		WinName.style.left = x;
+		WinName.style.top = y;		
+		NowKnowledgeID = obj.id;
+	}	
+}
+function ShowRight1(WinName,obj)
+{
+	if((parseInt(window.event.button)%2) ==0)
+	{
+		WinName.style.display = "block";
+		var x=document.documentElement.scrollLeft + event.x;
+        var y= event.y;	
+		if( navigator.appVersion.indexOf("MSIE 6.0") >= 0 )
+	   {
+			  y = document.documentElement.scrollTop + y;
+	   }
+		WinName.style.left = x;
+		WinName.style.top = y;
+		if ( WinName.id == "AddTitle" ) { return;}
+		if ( WinName.id == "TWindow" )
+		{
+			NowKnowledgeID = obj.id;
+			return;
+		}
+		NowKnowledgeID = parseInt(obj.id.split("_")[0]);		
+		NowName = obj.id;
+		switch(obj.cells[2].innerHTML)
+		{
+			case '易':
+				$("LevelID").options[0].selected = true;
+				break;
+			case '中下':
+				$("LevelID").options[1].selected = true;
+				break;
+			case '中':
+				$("LevelID").options[2].selected = true;
+				break;
+			case '中上':
+				$("LevelID").options[3].selected = true;
+				break;
+			case '难':
+				$("LevelID").options[4].selected = true;
+				break;
+		}
+		$("TitleTypeID").options[parseInt(obj.id.split("_")[2])].selected = true;
+	}
+	else
+	{
+		if ( WinName.id == "AddTitle" ) { WinName.style.display = "none";}
+		if ( obj == null ){ return;}
+		if ( obj.parentNode.parentNode )
+		{
+			MoveTable = obj.parentNode.parentNode;
+			MoveRow = obj;
+			onMouseDown = true;
+			$("KnowledgeTemple_Content_1").style.cursor = "move";
+		}
+	}
+}
+function ShowK(KID)
+{
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=GetKnowledgeNote&KnowledgeID="+KID,false);
+	xmlhttp.send();
+	if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+	{
+		WinName = $("ShowK");
+		SYLatexEngine.RenderNode(WinName,{});
+		WinName.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+		WinName.style.display = "block";
+		var x=document.documentElement.scrollLeft + event.x;
+		var y= event.y;	
+		if( navigator.appVersion.indexOf("MSIE 6.0") >= 0 )
+	   {
+			  y = document.documentElement.scrollTop + y;
+	   }
+		WinName.style.left = x;
+		if ( y > 500 )
+		{
+			y= y - WinName.offsetHeight;
+		}
+		WinName.style.top = y;
+	}
+}
+function ShowKnowledgeDetail(KID)
+{
+	$("Over").style.display = "block";
+	$("KnowledgeDetail").style.display = "block";
+	var x=getX($("KnowledgeTemple_Content"));
+	var y=getY($("KnowledgeTemple_Content"));
+	$("KnowledgeDetail").style.left = x;
+	$("KnowledgeDetail").style.top = y;
+	$("KnowledgeDetailID").value = KID;
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=GetKnowledgeName&KnowledgeID="+KID,false);
+	xmlhttp.send();
+	$("KnowledgeDetail").childNodes[0].childNodes[0].childNodes[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	xmlhttp.open("GET","knowledge.asp?DoType=GetKnowledgeNote&KnowledgeID="+KID,false);
+	xmlhttp.send();
+	$("KnowledgeDetailEdit").value = bytes2BSTR(xmlhttp.ResponseBody);
+	$("eWebEditor").src="../SYEditor/SYEditor.htm?id=KnowledgeDetailEdit&style=bbs";
+}
+function ShowTitleWindow(showtype)
+{
+	AddType = showtype
+	$("AddTitle").style.display = "none";
+	$("Over").style.display = "block";
+	$("TitleDetail").style.display = "block";
+	if ( $("Library").style.display == "block" )
+	{
+		$("banner").childNodes[3].className = "bbutton";
+		$("banner").childNodes[2].className = "bbuttonc";
+		$("KnowledgeBuilding").style.display = "block";
+		$("Library").style.display = "none";
+	}
+	var x=getX($("KnowledgeTemple_Content"))+70;
+	var y=getY($("KnowledgeTemple_Content"))+70;
+	$("TitleDetail").style.left = x;
+	$("TitleDetail").style.top = y;
+	$("Title").value = "";
+	if ( showtype == "Edit" )
+	{
+		var obj = $("KModels");
+		obj = $(NowKnowledgeID);
+		$("Title").value=obj.cells[0].innerHTML;		
+	}
+}
+function HideWindow()
+{
+	$("MWindow").style.display = "none";
+	$("TWindow").style.display = "none";
+	$("TWindow1").style.display = "none";
+	$("AddTitle").style.display = "none";
+	$("Window").style.display = "none";
+	$("Over").style.display = "none";
+	//$("FolderDetail").style.display = "none";
+	$("Over").style.display = "none";
+	$("ModelWindow1").style.display = "none";
+	$("ModelWindow2").style.display = "none";
+	$("FWindow").style.display = "none";
+	$("FWindow0").style.display = "none";
+	$("StyleWindow").style.display = "none";
+//	$("SetFile").style.backgroundImage = "";
+//	$("FolderList").style.display = "none";
+//	$("SearchNote").style.display = "none";
+//	$("SearchList").style.display = "none";
+//	CType = "";
+//	$("SelectWindow").style.display = "none";
+	var MaxID = document.getElementsByTagName("select").length;
+	for (i=0;i<MaxID;i++)
+	{
+		document.getElementsByTagName("select")[i].disabled = false;
+	}
+}
+function SaveTitleName(savetype)
+{
+	if ( savetype != null ) { AddType=savetype;}
+	var obj;
+	var cols=0;
+	if ( $("Title").value == "" ) { alert('题目不能为空！请重新填写');return;}
+		obj = $("KModels");
+		cols=5;
+	
+	if ( AddType == "Add" )
+	{
+		if ( obj.rows[0].cells[0].colSpan == cols && obj.rows[0].id == "" )
+		{
+			obj.deleteRow(0);
+		}		
+		obj.insertRow(obj.rows.length);
+		obj = obj.rows[obj.rows.length-1];
+		obj.id = obj.parentNode.rows.length-1;			
+		obj.attachEvent("onmouseover",function(){HideWindow();});
+		obj.attachEvent("onmousedown",function(){ShowRight1($("TWindow"),obj);});
+		obj.attachEvent("onmouseup",function(){TMoveRow1(obj);});
+		obj.insertCell(0);
+		obj.cells[0].className = "mtitle";
+		obj.cells[0].colSpan = cols
+		//if ( $("TestTemple").style.display != "none" )
+//		{
+//			obj.cells[0].style.borderBottom = "1px solid #9bc6fd";
+//		}
+		obj.cells[0].innerHTML = $("Title").value;
+	}
+	if ( AddType == "Edit" )
+	{
+		obj = obj.rows[parseInt(NowKnowledgeID)];
+		obj.cells[0].innerHTML = $("Title").value;
+	} 
+	if ( AddType == "Del" )
+	{
+		obj.deleteRow($(NowKnowledgeID).rowIndex);
+		if ( obj.rows.length == 0 )
+		{
+			obj.insertRow(obj.rows.length);
+			obj = obj.rows[obj.rows.length-1];
+			obj.insertCell(0);
+			obj.cells[0].colSpan = cols;
+			obj.cells[0].className = "norecord";
+			obj.cells[0].innerHTML = '通过考点建设栏目右侧的“选题”按钮即可进行考点选择!右键可添加题目！';
+			//if ( $("TestTemple").style.display == "none" )
+//			{
+//				$("KExamNum").innerHTML = "0";
+//				$("KTotalNum").innerHTML = "0";
+//				$("KLevel").innerHTML = "0";
+//				$("KModels_Result").rows[0].cells[0].innerHTML = "<span class='bold'>统计：</span>";
+//			}
+//			else
+//			{
+				$("TExamNum").innerHTML = "0";
+				$("TTotalNum").innerHTML = "0";
+				$("TLevel").innerHTML = "0";
+				$("TestResult").rows[0].cells[0].innerHTML = "<span class='bold'>统计：</span>";
+
+			//}
+		}
+	}
+	$("TitleDetail").style.display = "none";
+	$("Over").style.display = "none";
+}
+function SelTitleAreaShow(tag,KnowledgeID){
+	if(tag==0)
+	{
+		$('SelTitleArea').style.display = 'none';
+		$("Over").style.display = "none";
+		var MaxID = document.getElementsByTagName("select").length;
+		for (i=0;i<MaxID;i++)
+		{
+			document.getElementsByTagName("select")[i].disabled = false;
+		}
+	}
+	else
+	{
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","knowledge.asp?DoType=Check&KnowledgeID="+KnowledgeID,false);
+		xmlhttp.send();
+		if ( bytes2BSTR(xmlhttp.ResponseBody) == "NO" )
+		{
+			alert('请先将该考点中的试题分配至底层各考点中！')
+			return false;
+		}
+		NowKnowledgeID = KnowledgeID;	
+		var x=getX($("KnowledgeBuilding_Content"));
+		var y=getY($("KnowledgeBuilding_Content"));
+		$("SelTitleArea").style.left = x+150;
+		$("SelTitleArea").style.top = y+250;
+		$('SelTitleArea').style.display = 'block';
+		if ( $("Library").style.display == "block" )
+		{
+			$("banner").childNodes[3].className = "bbutton";
+			$("banner").childNodes[2].className = "bbuttonc";
+			$("KnowledgeBuilding").style.display = "block";
+			$("Library").style.display = "none";
+		}
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","knowledge.asp?DoType=GetPostion&KnowledgeID="+KnowledgeID,false);
+		xmlhttp.send();
+		$("SelTitleArea").childNodes[0].childNodes[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);	
+		ShowTitleNum();	
+		HideWindow();	
+		$("Over").style.height = document.body.offsetHeight;
+		$("Over").style.display = "block";
+		var MaxID = document.getElementsByTagName("select").length;
+		for (i=0;i<MaxID;i++)
+		{
+			if ( document.getElementsByTagName("select")[i].id != "LevelID" && document.getElementsByTagName("select")[i].id != "SelectTitleNum" && document.getElementsByTagName("select")[i].id != "TitleScroe" && document.getElementsByTagName("select")[i].id != "TitleTypeID")
+			{
+				document.getElementsByTagName("select")[i].disabled = true;
+			}
+		}
+	}
+}
+function ShowTitleNum()
+{
+	var sql = "";
+	//if ( $("AreaAll") )
+	//{
+	//	if ( $("AreaG").checked == true && $("AreaM").checked == true )
+	//	{
+	//		sql = " And (Notes like '%模拟%' Or Notes like '%高考%' ) ";
+	//	}
+	//	else
+	//	{
+	//		if ( $("AreaAll").checked == false )
+	//		{
+	//			if ( $("AreaG").checked == true )
+	//			{
+	//				sql = " And Notes like '%高考%' ";
+	//			}
+	//			if ( $("AreaM").checked == true )
+	//			{
+	//				sql = " And Notes like '%模拟%' ";
+	//			}
+	//		}
+	//	}
+	//}
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=GetSelectTitleNum&KnowledgeID="+NowKnowledgeID+"&LevelID="+$("LevelID").value+"&TitleTypeID="+$("TitleTypeID").value + "&SQL="+escape(sql),false);
+	xmlhttp.send();
+	//alert(bytes2BSTR(xmlhttp.ResponseBody));
+	$("ShowSelectTitleNum").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	xmlhttp.open("GET","knowledge.asp?DoType=GetAllTitleNum&KnowledgeID="+NowKnowledgeID+"&TitleTypeID="+$("TitleTypeID").value+ "&SQL="+escape(sql),false);
+	xmlhttp.send();	
+	$("TitleNumShow").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	var KName = NowKnowledgeID + "_" + $("LevelID").options[parseInt($("LevelID").value)-1].text;
+	var obj = $(KName);
+	if (obj)
+	{		
+		$("SelectTitleNum").options[parseInt(obj.cells[2].innerHTML)-1].selected = true;
+		$("TitleScroe").value = obj.cells[3].innerHTML/obj.cells[2].innerHTML;
+		//$("TitleScroe").options[parseInt(obj.cells[3].innerHTML)/parseInt(obj.cells[2].innerHTML)-1].selected = true;
+	}
+}
+function getTLevel()
+{
+	var Total = 0;
+	var obj = $("TModels");
+	if (obj.rows[0].cells[0].colSpan == 4 && obj.rows[0].id == "" ) { $("KLevel").innerHTML = "0";return;}
+	for ( i = 0; i < obj.rows.length; i++)
+	{
+		if ( obj.rows[i].cells[0].colSpan != 4 )
+		{ 
+			var Obj = obj.rows[i];
+			var ObjLevel;
+			switch(Obj.cells[2].innerHTML)
+			{
+				case '易':
+					ObjLevel = 0.1;
+					break;
+				case '中下':
+					ObjLevel = 0.3;
+					break;
+				case '中':
+					ObjLevel = 0.5;
+					break;
+				case '中上':
+					ObjLevel = 0.7;
+					break;
+				case '难':
+					ObjLevel = 0.9;
+					break;
+			}
+			Total = Total + ObjLevel;
+		}
+	}	
+	Total = Total / parseInt($("TTotalNum").innerHTML);	
+	$("TLevel").innerHTML = Total.toFixed(2);
+}
+function ChangeScroe()
+{
+	var Total = 0;
+	for ( i = 0; i < $("TTitleScroe").length; i++)
+	{
+		Total = Total + $("TTitleScroe")[i].value;
+	}
+	$("TTotalNum").innerHTML = Total;
+}
+function getLevel()
+{
+	var Total = 0;
+	var obj = $("KModels");
+	if (obj.rows[0].cells[0].colSpan == 5 && obj.rows[0].id == "" ) { $("KLevel").innerHTML = "0";return;}
+	for ( i = 0; i < obj.rows.length; i++)
+	{
+		if ( obj.rows[i].cells[0].colSpan != 5 )
+		{ 
+			var Obj = obj.rows[i];
+			var ObjLevel;
+			switch(Obj.cells[2].innerHTML)
+			{
+				case '易':
+					ObjLevel = 0.1;
+					break;
+				case '中下':
+					ObjLevel = 0.3;
+					break;
+				case '中':
+					ObjLevel = 0.5;
+					break;
+				case '中上':
+					ObjLevel = 0.7;
+					break;
+				case '难':
+					ObjLevel = 0.9;
+					break;
+			}
+			Total = Total + ObjLevel * parseInt(Obj.cells[4].innerHTML);
+		}
+	}	
+	Total = Total / (Math.round($("KTotalNum").innerHTML*100)/100);	
+	$("KLevel").innerHTML = Total.toFixed(2);
+}
+function SaveTitle(SType)
+{
+	var sql = "";
+	var name = "";
+	//if ( $("AreaAll") )
+	//{
+	//	if ( $("AreaG").checked == true && $("AreaM").checked == true )
+	//	{
+	//		sql = " And (Notes like '%模拟%' Or Notes like '%高考%' ) ";
+	//		name = "<span style='color:#000000'>(模拟、高考)</span>";
+	//	}
+	//	else
+	//	{
+	//		if ( $("AreaAll").checked == false )
+	//		{
+	//			if ( $("AreaG").checked == true )
+	//			{
+	//				sql = " And Notes like '%高考%' ";
+	//				name = "<span style='color:#000000'>(高考)</span>";
+	//			}
+	//			if ( $("AreaM").checked == true )
+	//			{
+	//				sql = " And Notes like '%模拟%' ";
+	//				name = "<span style='color:#000000'>(模拟)</span>";
+	//			}
+	//		}
+	//	}
+    //}
+	if ( $("SelectTitleNum").value == "0" ) { alert('该题型和难度下没有试题，请重新选择！');return false;}	
+	var MName = NowKnowledgeID + "_" +  $("LevelID").options[parseInt($("LevelID").value)-1].text + "_" + $("TitleTypeID").selectedIndex;
+	var obj;
+	if ( $(MName) )
+	{
+		obj = $(MName);
+		//if ($("AreaAll"))
+		//{
+		//	obj.sql = sql;
+		//}
+		if (parseInt($("KExamNum").innerHTML) + parseInt($("SelectTitleNum").value) - parseInt(obj.cells[3].innerHTML) > 10 && parseInt(4) == 4) {alert("题量选择不能超过10题！");return false;}
+		$("KExamNum").innerHTML = parseInt($("KExamNum").innerHTML) + parseInt($("SelectTitleNum").value) - parseInt(obj.cells[3].innerHTML);
+		$("KTotalNum").innerHTML = Math.round($("KTotalNum").innerHTML*100)/100 + $("TitleScroe").value*$("SelectTitleNum").value - obj.cells[4].innerHTML;
+		obj.cells[1].innerHTML = $("TitleTypeID").options[$("TitleTypeID").selectedIndex].text;
+		obj.cells[2].innerHTML = $("LevelID").options[parseInt($("LevelID").value)-1].text;
+		obj.cells[3].innerHTML = $("SelectTitleNum").value;
+		obj.cells[4].innerHTML = $("TitleScroe").value * parseInt($("SelectTitleNum").value);
+	}
+	else
+	{		
+		if (parseInt($("KExamNum").innerHTML) + parseInt($("SelectTitleNum").value) > 10 && parseInt(4) == 4) {alert("题量选择不能超过10题！");return false;}
+		obj = $("KModels");
+		if ( obj.rows[0].cells[0].colSpan == 5 && obj.rows[0].id == "" )
+		{
+			obj.deleteRow(0);
+		}
+		obj.insertRow(obj.rows.length);
+		obj = obj.rows[obj.rows.length-1];
+		obj.id = MName;
+		//if ($("AreaAll"))
+		//{
+		//	obj.sql = sql;
+		//}
+		obj.attachEvent("onmouseover",function(){HideWindow();});
+		obj.attachEvent("onmousedown",function(){ShowRight1($("MWindow"),obj);});
+		obj.attachEvent("onmouseup",function(){TMoveRow1(obj);});
+		obj.insertCell(0);
+		obj.cells[0].className = "td6";
+		obj.cells[0].innerHTML = $("SelTitleArea").childNodes[0].childNodes[0].innerHTML+name;
+		ShowKnowledgeNum($("SelTitleArea").childNodes[0].childNodes[0].innerHTML);
+		obj.insertCell(1);
+		obj.cells[1].className = "td5";
+		obj.cells[1].innerHTML = $("TitleTypeID").options[$("TitleTypeID").selectedIndex].text;
+		obj.insertCell(2);
+		obj.cells[2].className = "td5";
+		obj.cells[2].innerHTML = $("LevelID").options[parseInt($("LevelID").value)-1].text;
+		obj.insertCell(3);
+		obj.cells[3].className = "td5";
+		obj.cells[3].innerHTML = $("SelectTitleNum").value;
+		obj.insertCell(4);
+		obj.cells[4].className = "td7";
+		obj.cells[4].innerHTML = $("TitleScroe").value * $("SelectTitleNum").value;
+		$("KExamNum").innerHTML = parseInt($("KExamNum").innerHTML) + parseInt($("SelectTitleNum").value);
+		$("KTotalNum").innerHTML = Math.round($("KTotalNum").innerHTML*100)/100 + $("TitleScroe").value * parseInt($("SelectTitleNum").value);
+	}
+	getLevel();
+	if ( SType == "SaveExit" )	{SelTitleAreaShow(0);}
+}
+function ShowKnowledgeNum(Str)
+{
+	if ( $("KNum_0") )
+	{
+		var Str = $("KNum_0").innerHTML;
+		Str = Str.replace(/&nbsp;/g,"");
+		Str = parseInt(Str) + 1;
+		$("KNum_0").innerHTML = "&nbsp;" + Str + "&nbsp;";
+		return true;
+	}
+	var KNum = 1;	
+	while(Str.indexOf("&gt;")>=0)
+	{
+		KNum = KNum + 1;
+		Str = Str.substring(Str.indexOf("&gt;")+1,Str.length);
+	}
+	var KName = "Knum_" + KNum;
+	if ($(KName))
+	{
+		$(KName).innerHTML = parseInt($(KName).innerHTML) + 1 +"&nbsp;&nbsp;";
+	}
+	else
+	{
+		var Kobj = $("KModels_Result").rows[0].cells[0];
+		for ( i=1;i<Kobj.childNodes.length;i++)
+		{
+			if ( parseInt(Kobj.childNodes[i].id.substring(5,Kobj.childNodes[i].id.length)) == KNum - 1 )
+			{
+				Str = "";
+				for ( j = 0; j<Kobj.childNodes.length;j++)
+				{
+					if ( j == i  )
+					{
+						Str = Str + Kobj.childNodes[j].outerHTML + "<span class='blue'>"+KNum+"级考点：</span><span id='Knum_"+KNum+"' class='red'>1&nbsp;&nbsp;</span>";
+					}
+					else
+					{
+						Str = Str + Kobj.childNodes[j].outerHTML;
+					}
+				}
+				Kobj.innerHTML = Str;
+				i = 0;
+				break;					
+			}
+			if ( parseInt(Kobj.childNodes[i].id.substring(5,Kobj.childNodes[i].id.length)) == KNum + 1 )
+			{
+				Str = "";
+				for ( j = 0; j<Kobj.childNodes.length;j++)
+				{					
+					if ( j == i - 2 )
+					{
+						Str = Str + Kobj.childNodes[j].outerHTML + "<span class='blue'>"+KNum+"级考点：</span><span id='Knum_"+KNum+"' class='red'>1&nbsp;&nbsp;</span>" ;
+					}
+					else
+					{
+						Str = Str + Kobj.childNodes[j].outerHTML;
+					}
+				}
+				Kobj.innerHTML = Str;
+				i = 0;
+				break;					
+			}				
+		}
+		if ( i > 0 ) { Kobj.innerHTML = Kobj.innerHTML + "<span class='blue'>"+KNum+"级考点：</span><span id='Knum_"+KNum+"' class='red'>1&nbsp;&nbsp;</span>";}
+	}
+}
+function DelTitleInfor()
+{
+	var trName = NowKnowledgeID;
+	var obj = $("TModels");
+	$("TExamNum").innerHTML = parseInt($("TExamNum").innerHTML) - 1;
+	$("TTotalNum").innerHTML = parseInt($("TTotalNum").innerHTML) - parseInt($(trName).cells[3].childNodes[0].value);	
+	obj.deleteRow($(trName).rowIndex);	
+	HideWindow();
+	if ( obj.rows.length == 0 )
+	{
+		obj.insertRow(obj.rows.length);
+		obj = obj.rows[obj.rows.length-1];
+		obj.insertCell(0);
+		obj.cells[0].colSpan = 5;
+		obj.cells[0].className = "norecord";
+		obj.cells[0].innerHTML = '试题模板';
+		$("TExamNum").innerHTML = "0";
+		$("TTotalNum").innerHTML = "0";
+		$("TLevel").innerHTML = "0";
+		$("Test_Result").rows[0].cells[0].innerHTML = "<span class='bold'>统计：</span>";
+	}
+	else
+	{
+		getTLevel();
+	}
+}
+function DelTable()
+{
+	var trName = NowName;
+	var obj = $("KModels");
+	$("KExamNum").innerHTML = Math.round($("KTotalNum").innerHTML*100)/100 - $(trName).cells[3].innerHTML;
+	$("KTotalNum").innerHTML = Math.round($("KTotalNum").innerHTML*100)/100 - $(trName).cells[4].innerHTML;
+	var KNum = 1;
+	var Str = $(trName).cells[0].innerHTML;
+	while(Str.indexOf("&gt;")>=0)
+	{
+		KNum = KNum + 1;
+		Str = Str.substring(Str.indexOf("&gt;")+1,Str.length);
+	}
+	var KName = "Knum_" + KNum;
+	if($(KName))
+	{$(KName).innerHTML = parseInt($(KName).innerHTML) - 1;}
+	obj.deleteRow($(trName).rowIndex);	
+	HideWindow();
+	if ( obj.rows.length == 0 )
+	{
+		obj.insertRow(obj.rows.length);
+		obj = obj.rows[obj.rows.length-1];
+		obj.insertCell(0);
+		obj.cells[0].colSpan = 5;
+		obj.cells[0].className = "norecord";
+		obj.cells[0].innerHTML = '试题模板';
+		$("KExamNum").innerHTML = "0";
+		$("KTotalNum").innerHTML = "0";
+		$("KLevel").innerHTML = "0";
+		$("KModels_Result").rows[0].cells[0].innerHTML = "<span class='bold'>统计：</span>";
+	}
+	else
+	{
+		getLevel();
+	}
+}
+function GetFolderList(skid)
+{
+	var obj;	
+	if ( parseInt(skid) == 0 )
+	{
+		obj = $("List1");
+	}
+	else
+	{
+		var name;
+		if ( parseInt(SaveKindID) > 0 )
+		{
+			name = "trF_" + SaveKindID;
+			if ($(name))
+			{
+				$(name).style.backgroundColor = "";			
+			}
+		}
+		name = "imgF_" + skid;
+		obj = $(name);
+		if ( obj.src.indexOf("fclose") > 0 )
+		{
+			obj.src = "images/new/fopen.gif";
+			name = obj.parentNode.parentNode.parentNode.parentNode.id
+			//SaveKindID = parseInt(name.substring(name.indexOf("_")+1,name.length));
+			name = "trF_" + skid;
+			obj = $(name);			
+			obj.style.backgroundColor = "";
+			obj.name = "";
+			name = "NextF_" + skid;
+			obj = $(name);
+			obj.style.display = "none";
+			return;
+		}
+		else
+		{
+			if ( obj.src.indexOf("fopen") > 0 )
+			{
+				obj.src = "images/new/fclose.gif";
+			}
+			name = "trF_" + skid;
+			obj = $(name);
+			obj.style.backgroundColor = "#e1ecf8";
+			name = "imgF_" + skid;
+			obj = $(name);
+			if ( obj.src.indexOf("folder") > 0 ) 
+			{
+			 	//SaveKindID = skid;
+				return;
+			}
+			name = "NextF_" + skid;
+			obj = $(name);
+			obj.style.display = "block";
+		}
+	}
+	if ( FoldersType == 'GetFolderList' || FoldersType == 'GetTestList' )
+	{
+		url = "folder.asp?DoType=GetFolderList&TestModelID="+Library+"&SaveKindID="+skid;
+	}
+	else
+	{
+		url = "folder.asp?DoType=GetShareFolderList&TestModelID="+Library+"&SaveKindID="+skid;
+	}
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");	
+	xmlhttp.open("GET",url,false);
+	xmlhttp.send();
+	//SaveKindID = skid;
+	if ( parseInt(skid) == 0 )
+	{
+		obj.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	}
+	else
+	{
+		obj.cells[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	}
+}
+function ShowFolderList(dotype,L)
+{
+	if ( L < 3 && ButtonType != "gxsj" )
+	{
+		var obj = $("KModels");	
+		if (obj)
+		{
+			if ( obj.rows[0].cells[0].colSpan == 5 && obj.rows[0].id == "" )
+			{
+				return false;
+			}	
+			Library = L;
+		}
+	}
+	else
+	{
+		if ( Library != 2)
+		{
+			Library = 1;
+		}
+	}
+	FoldersType = dotype;
+	if ( Library == 1 )
+	{
+		$("Window").childNodes[0].childNodes[0].childNodes[0].innerHTML = '试卷库管理文件夹';
+	}
+	else
+	{
+		$("Window").childNodes[0].childNodes[0].childNodes[0].innerHTML = '模版库管理文件夹';
+	}	
+	$("Window").style.display = "block";
+	var x=getX($("LibraryList"))+150;
+	var y=getY($("LibraryList"))+40;
+	$("Window").style.left = x;
+	$("Window").style.top = y;	
+	$("Over").style.height = document.body.offsetHeight;
+	$("Over").style.display = "block";	
+	GetFolderList(0);
+	var MaxID = document.getElementsByTagName("select").length;
+	for (i=0;i<MaxID;i++)
+	{
+		document.getElementsByTagName("select")[i].disabled = true;
+	}
+	
+}
+function ShowSaveName(SKID)
+{	
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	if ( !$("AreaAll") )
+	{
+		CopySaveKindID = SKID;	
+		
+		if ( CType == "UploadFolder" )
+		{
+			xmlhttp.open("GET","folder.asp?DoType=GetTrueName",false);
+			xmlhttp.send();
+			$("SaveName").childNodes[0].childNodes[0].childNodes[0].innerHTML = '文件保存至' + bytes2BSTR(xmlhttp.ResponseBody) + '共享文件夹';
+		}
+		else
+		{
+			xmlhttp.open("GET","folder.asp?DoType=GetFileName&SaveKindID="+SKID,false);
+			xmlhttp.send();
+			$("SaveName").childNodes[0].childNodes[0].childNodes[0].innerHTML = '文件保存至' + bytes2BSTR(xmlhttp.ResponseBody);
+		}
+	}
+	$("Window").style.display = "none";
+	$("SaveName").style.display = "block";	
+	var x=document.documentElement.scrollLeft + 200;
+	var y= 150;
+	if(navigator.appVersion.match(/6./i)=='6.') 
+   {
+		  y = document.documentElement.scrollTop + y;
+   }
+	$("SaveName").style.left = x;
+	$("SaveName").style.top = y;	
+	$("Over").style.height = document.body.offsetHeight;
+	$("Over").style.display = "block";
+	var MaxID = document.getElementsByTagName("select").length;
+	for (i=0;i<MaxID;i++)
+	{
+		document.getElementsByTagName("select")[i].disabled = true;
+	}
+	if ( CType != "" )
+	{
+		xmlhttp.open("GET","folder.asp?DoType=GetFileName&SaveKindID="+SaveKindID,false);
+		xmlhttp.send();
+		$("SaveKindName").value = bytes2BSTR(xmlhttp.ResponseBody);
+	}	
+}
+var xmlHTTP;
+function SaveKName()
+{		
+	if (parseInt(4) == 4)
+	{						
+		var obj = $("KModels");
+		var PaperContent = "";
+		var TID = "";
+		createXMLHttp(); 
+		for ( i = 0; i < obj.rows.length; i++)
+		{
+			if ( obj.rows[i].cells[0].colSpan == 5 )
+			{
+				PaperContent = PaperContent + "#SYFenGe#" + obj.rows[i].cells[0].innerHTML + "#SYFenGe#";
+			}
+			else
+			{
+				var Obj = obj.rows[i];
+				var ObjId = Obj.id.substring(0,Obj.id.indexOf("_"));
+				var ObjType = Obj.id.substring(Obj.id.length-1,Obj.id.length);
+				ObjType = $("TitleTypeID").options[parseInt(ObjType)].value;
+				var ObjLevel;
+				switch(Obj.cells[2].innerHTML)
+				{
+					case '易':
+						ObjLevel = 1;
+						break;
+					case '中下':
+						ObjLevel = 2;
+						break;
+					case '中':
+						ObjLevel = 3;
+						break;
+					case '中上':
+						ObjLevel = 4;
+						break;
+					case '难':
+						ObjLevel = 5;
+						break;
+				}
+					//建立xmlHttp 对象	
+				var sql="";
+				if (Obj.sql)
+				{
+					sql = Obj.sql;
+				}
+				var send_string="DoType=SavePaper4&KnowledgeID="+ObjId+"&LevelID="+ObjLevel+"&SelectTitleNum="+Obj.cells[3].innerHTML+"&TitleScroe="+Obj.cells[4].innerHTML+"&TitleTypeID="+ObjType+"&sql="+escape(sql)+"&TID="+TID;
+				send_string= encodeURI(send_string);		
+				xmlHTTP.open("post","folder.asp",false); //传送方式 读取的页面 异步与否
+				xmlHTTP.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				xmlHTTP.send(send_string); //发送
+				//return;
+				//TID = TID + xmlHTTP.responseText.replace("|",",").substring(0,xmlHTTP.responseText.length-1);
+				PaperContent = PaperContent + xmlHTTP.responseText;	
+			}	
+		}
+		//alert($("PaperContent"))
+        $("PaperContent").value = PaperContent;
+        //alert($("SaveKindName").value)
+		window.open("paper.asp?SaveKindName="+escape($("SaveKindName").value))
+		HideShow();
+		return;
+	}
+	if ( $("SaveKindName").value == "" ) { alert('文件名称不能为空，请重新填写！'); return;}	
+	if ( CType == "UploadFolder" )
+	{		
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");		
+		xmlhttp.open("GET","folder.asp?DoType=AddShareFile&SaveKindName="+$("SaveKindName").value+"&SaveKindID="+SaveKindID+"&TestModelID="+Library,false);
+		xmlhttp.send();	
+		var nextname = "SFolderNext_" + bytes2BSTR(xmlhttp.ResponseBody);
+		var trname = "SFoldertr_" + bytes2BSTR(xmlhttp.ResponseBody);
+		var SID = bytes2BSTR(xmlhttp.ResponseBody);
+		if ( $(nextname) )
+		{
+			if ( $(nextname).style.display == "block" )
+			{
+				xmlhttp.open("GET","folder.asp?DoType=CallShareFolder&SaveKindID="+ SID +"&TestModelID="+Library,false);
+				xmlhttp.send();
+				$(nextname).cells[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			}
+			else
+			{
+				ShowSFolder(SID,$(trname));
+			}
+		}
+		else
+		{
+			xmlhttp.open("GET","folder.asp?DoType=CallShareFolder&SaveKindID=0&TestModelID="+Library,false);
+			xmlhttp.send();
+			$("Library_S_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			ShowSFolder(SID,$(trname));
+		}
+		//ObjTemp.cells[0].childNodes[0].innerHTML = "&nbsp;" + $("SaveKindName").value;
+		HideShow();
+		return;
+	}	
+	if ( CopySaveKindID != "")
+	{
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=CheckName&SaveKindID="+CopySaveKindID+"&SaveKindName="+$("SaveKindName").value,false);
+		xmlhttp.send();
+		if ( bytes2BSTR(xmlhttp.ResponseBody) == '当前文件夹已经存在，请重新填写文件夹名称！' ) { alert(bytes2BSTR(xmlhttp.ResponseBody)); return;}	
+	}
+	else
+	{
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=CheckName&SaveKindID="+$("SelectKindName").value+"&SaveKindName="+$("SaveKindName").value,false);
+		xmlhttp.send();
+		if ( bytes2BSTR(xmlhttp.ResponseBody) == '当前文件夹已经存在，请重新填写文件夹名称！' ) { alert(bytes2BSTR(xmlhttp.ResponseBody)); return;}
+	}	
+	if ( FoldersType == "GetTestList" )
+	{
+		SaveKindID = CopySaveKindID;
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");		
+		xmlhttp.open("GET","folder.asp?DoType=SaveTestKnowledge&SaveKindName="+$("SaveKindName").value,false);
+		xmlhttp.send();	
+		var KID = bytes2BSTR(xmlhttp.ResponseBody);
+		xmlhttp.open("GET","folder.asp?DoType=SaveFile&TestModelID="+Library+"&SaveKindID="+SaveKindID+"&SaveKindName="+$("SaveKindName").value+"&PaperContent=TestInsert&KnowledgeID="+KID,false);
+		xmlhttp.send();
+		var SKID = bytes2BSTR(xmlhttp.ResponseBody);
+		window.open("ExamInsert.asp?SaveKindID="+SKID+"&KnowledgeID="+KID);
+		HideShow();
+		return;
+	}
+	if ( TitleID != "" )
+	{
+		SaveKindID = CopySaveKindID;
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=SaveFile&TestModelID="+Library+"&SaveKindID="+SaveKindID+"&SaveKindName="+$("SaveKindName").value,false);		
+		xmlhttp.send();			
+		var xmlhttp = bytes2BSTR(xmlhttp.ResponseBody);		
+		xmlhttp.open("GET","folder.asp?DoType=SaveNotePaper&SaveKindID="+SKID+"&TitleInforID="+TitleID,false);
+		xmlhttp.send();
+		ShowChooseSelectKindName();
+		ShowChooseFile();
+		if ( parseInt(4) == 6 || parseInt(4) == 3 )
+		{
+			CheckPublishFolder(SKID);
+		}
+		HideShow();
+		return;
+	}
+	if ( CType == "ChangeFolderName" )
+	{		
+		xmlhttp.open("GET","folder.asp?DoType=ChangeFolder&SaveKindName="+$("SaveKindName").value+"&SaveKindID="+SaveKindID,false);
+		xmlhttp.send();		
+		ObjTemp.cells[0].childNodes[0].innerHTML = "&nbsp;" + $("SaveKindName").value;
+		HideShow();
+		return;
+	}
+	if ( CType != "" && CType != null ) { CopyFolder(); HideShow(); return;}		
+	if ( $("KModels").rows[0].cells[0].colSpan == 5 && $("KModels").rows[0].id == "" )
+	{
+		alert("请先选好考点再进行添加！");
+		return;
+	}
+	else
+	{
+		//SaveKindID = CopySaveKindID; 
+		//保存试卷和保存模板，首先在SaveKinds根据名字生成这份记录的信息
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=SaveFile&TestModelID="+Library+"&SaveKindID="+CopySaveKindID+"&SaveKindName="+$("SaveKindName").value,false);
+		xmlhttp.send();			
+		var SKID = bytes2BSTR(xmlhttp.ResponseBody);					
+		var obj = $("KModels");
+		//该项为该份试卷做为记录信息用，大题之间用#SYFenGe#来分割，小题之间的modelid用|进行分割
+		var PaperContent = "";
+		//获取每一行的数据
+		for ( i = 0; i < obj.rows.length; i++)
+		{
+			//判断考点列表中的行是大题的标题还是选中的考点，大题的标题只有1列
+			if ( obj.rows[i].cells[0].colSpan == 5 )
+			{
+				PaperContent = "#SYFenGe#" + obj.rows[i].cells[0].innerHTML + "#SYFenGe#";
+				xmlhttp.open("GET","folder.asp?DoType=SavePaperContent&SaveKindID="+SKID+"&PaperContent="+escape(PaperContent),false);
+				xmlhttp.send();	
+			}
+			else
+			{
+				var Obj = obj.rows[i];
+				var ObjId = Obj.id.substring(0,Obj.id.indexOf("_"));
+				var ObjType = Obj.id.substring(Obj.id.length-1,Obj.id.length);
+				ObjType = $("TitleTypeID").options[parseInt(ObjType)].value;
+				var ObjLevel;
+				switch(Obj.cells[2].innerHTML)
+				{
+					case '易':
+						ObjLevel = 1;
+						break;
+					case '中下':
+						ObjLevel = 2;
+						break;
+					case '中':
+						ObjLevel = 3;
+						break;
+					case '中上':
+						ObjLevel = 4;
+						break;
+					case '难':
+						ObjLevel = 5;
+						break;
+				}
+				//判断是模板类型保存还是试卷类型保存
+				if ( parseInt(Library) == 2 )
+				{				
+					xmlhttp.open("GET","folder.asp?DoType=SaveKnowledge&SaveKindID="+SKID+"&KnowledgeID="+ObjId+"&LevelID="+ObjLevel+"&SelectTitleNum="+Obj.cells[3].innerHTML+"&TitleScroe="+Obj.cells[4].innerHTML+"&TitleTypeID="+ObjType,false);
+					xmlhttp.send();				
+				}
+				else
+				{				
+					xmlhttp.open("GET","folder.asp?DoType=SavePaper&SaveKindID="+SKID+"&KnowledgeID="+ObjId+"&LevelID="+ObjLevel+"&SelectTitleNum="+Obj.cells[3].innerHTML+"&TitleScroe="+Obj.cells[4].innerHTML+"&TitleTypeID="+ObjType,false);
+					xmlhttp.send();
+				}
+				//alert(bytes2BSTR(xmlhttp.ResponseBody));
+			}			
+		}
+		if ( parseInt(4) == 6 || parseInt(4) == 3 )
+		{
+			CheckPublishFolder(SKID)
+		}	
+		HideShow();
+	}	
+}
+function CopyFolder()
+{
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType="+CType+"&TestModelID="+Library+"&SaveKindID="+SaveKindID+"&CopySaveKindID="+CopySaveKindID+"&SaveKindName="+$("SaveKindName").value,false);
+	xmlhttp.send();	
+	if ( bytes2BSTR(xmlhttp.ResponseBody) == "")
+	{
+		alert("操作成功！");
+	}
+	else
+	{
+		alert("操作失败！请重试，如多次操作失败请联系管理员！");
+	}
+	//ShowChooseSelectKindName();
+	//ShowChooseFile();
+	CType = "";
+}
+function ChangeFolderName()
+{	
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=GetFileName&SaveKindID="+SaveKindID,false);
+	xmlhttp.send();
+	$("SaveName").style.display = "block";
+	$("ModelWindow1").style.display = "none";
+	$("ModelWindow2").style.display = "none";
+	$("SaveKindName").value = bytes2BSTR(xmlhttp.ResponseBody);
+	var x=document.documentElement.scrollLeft + 200;
+	var y= 150;
+	if(navigator.appVersion.match(/6./i)=='6.') 
+   {
+		  y = document.documentElement.scrollTop + y;
+   }
+	$("SaveName").style.left = x;
+	$("SaveName").style.top = y;	
+	$("Over").style.height = document.body.offsetHeight;
+	$("Over").style.display = "block";
+	CType = "ChangeFolderName";
+}
+function DelAllTable(DelType){
+	var obj = $("KModels");
+	$("KExamNum").innerHTML = "0";
+	$("KTotalNum").innerHTML = "0";
+	$("KLevel").innerHTML = "0";
+	$("KModels_Result").rows[0].cells[0].innerHTML = "<span class='bold'>统计：</span>";
+	var maxrow = obj.rows.length;
+	for ( i=0; i<maxrow; i++)
+	{
+		obj.deleteRow(0);
+	}	
+	HideWindow();
+	obj.insertRow(0);
+	obj = obj.rows[0];
+	obj.insertCell(0);
+	obj.cells[0].colSpan = 5;
+	obj.cells[0].className = "norecord";
+	if ( DelType == 1 )
+	{
+		obj.cells[0].innerHTML = "通过考点建设栏目右侧的“选题”按钮即可进行考点选择!右键可添加题目！";	
+	}
+	else
+	{
+		obj.cells[0].innerHTML = "单击试卷或者模版名称将会载入该试卷或者模版考点！通过点击试题组卷可重新组卷！";	
+	}
+}
+function ChangeClass(obj,classnum)
+{	
+	if ( obj.value == "" ) {alert("文件名称不能为空，请重新填写！");return;}
+	if ( classnum == 0 )
+	{
+		obj.className = "Noinput";		
+	}
+	else
+	{
+		obj.className = "Yesinput";
+		if ( FType == "") { FType = "Edit";}
+	}
+	if ( FType == "Edit" && classnum == 0 )
+	{
+		var SKindID = obj.id.substring(obj.id.indexOf("_")+1,obj.length);
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=ChangeFolder&TestModelID="+Library+"&SaveKindName="+obj.value+"&SaveKindID="+SKindID,false);
+		xmlhttp.send();
+	}
+	if ( FType == "Add" && classnum == 0)
+	{
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=AddFolder&TestModelID="+Library+"&SaveKindName="+obj.value+"&SaveKindID="+SaveKindID,false);
+		xmlhttp.send();		
+		if ( bytes2BSTR(xmlhttp.ResponseBody) == "" )
+		{
+			alert("当前文件夹已经存在，请重新填写文件夹名称！");
+			return false;
+		}		
+		else
+		{
+			var newSaveKindID = bytes2BSTR(xmlhttp.ResponseBody);	
+			FType = "Edit";	
+			if ( $("Window").style.display == 'block' )
+			{
+				var html = obj.value;				
+				url = "folder.asp?DoType=GetNum&SaveKindID="+SaveKindID;	
+				xmlhttp.open("GET",url,false);
+				xmlhttp.send();
+				html = "<img id='imgF_" + newSaveKindID + "' style='margin-left:" + bytes2BSTR(xmlhttp.ResponseBody) + "px;' src='images/new/folder.gif' />&nbsp;" + html + "";
+				obj = obj.parentNode;
+				obj.innerHTML = html;
+				obj = obj.parentNode.parentNode;
+				//obj.parentNode.attachEvent("onclick",function(){GetFolderList(newSaveKindID)});
+				obj = obj.cells[1];						
+				//obj.style.cursor = "pointer";
+				obj.innerHTML = "<div class='LLDRight' onclick='ShowSaveName("+ newSaveKindID +")'>存于此处</div>";
+			}	
+		}
+	}
+}
+function FolderType(FT)
+{
+	FType = FT;
+	var obj;
+	obj = "SW_" + SaveKindID;
+	obj = $(obj);
+	if ( !obj )
+	{
+		obj = $("SW_0");
+		SaveKindID = 0;
+	}
+	if ( parseInt(SaveKindID) > 0 )
+	{
+		var Obj = obj.parentNode.parentNode;
+		Obj = Obj.parentNode.rows[Obj.rowIndex-1].cells[0].childNodes[0].childNodes[0];
+		Obj.src = 'images/new/fclose.gif';
+	}
+	obj.insertRow(obj.rows.length);
+	obj = obj.rows[obj.rows.length-1];
+	obj.insertCell(0);
+	obj.cells[0].className = "td1";
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	url = "folder.asp?DoType=GetNum&SaveKindID="+SaveKindID;	
+	xmlhttp.open("GET",url,false);
+	xmlhttp.send();
+	obj.cells[0].innerHTML = "<div class='Ktitle'><img style='margin-left:" + bytes2BSTR(xmlhttp.ResponseBody) + "px;' src='images/new/folder.gif' />&nbsp;<input id='folder_new' size='38' onFocus='ChangeClass(this,1)' onBlur='ChangeClass(this,0)' type='text' class='Yesinput'  size='15' /></div>";
+	obj.insertCell(1);
+	obj.cells[1].className = "td2";
+	obj.cells[1].innerHTML = "&nbsp;";
+	$("folder_new").focus();
+	$("folder_new").value = "新建文件夹";
+}
+function ShowFolder(SKID,obj)
+{
+	var TrName = "Foldertr_"+SaveKindID;
+	if ( $(TrName) )
+	{
+		$(TrName).style.backgroundColor = "";
+	}
+	obj.style.backgroundColor = "#c1dcfa";
+	SaveKindID = SKID;
+	var NextName = "FolderNext_" + SKID;
+	var ImgName = "Folderimg_" + SKID;		
+	if ( !$(ImgName) || $(ImgName).src.indexOf("folder") > 0 ) { return ;}
+	if ( $(ImgName).src.indexOf("fcloses") > 0 && CopyType != "FV" )
+	{
+		$(NextName).style.display = "none";
+		$(ImgName).src = "images/new/fopens.gif";		
+	}
+	else
+	{		
+		if ( $(NextName).cells[0].innerHTML == "" || CopyType == "FV" )
+		{
+			xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=CallFolder&SaveKindID="+SKID+"&TestModelID="+Library,false);
+			xmlhttp.send();
+			if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+			{
+				$(NextName).style.display = "block";
+				$(ImgName).src = "images/new/fcloses.gif";
+				$(NextName).cells[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			}
+			else
+			{
+				alert("该文件夹下没有试卷或者文件夹，可通过复制、剪切功能将试卷移动到该文件夹下方！");
+			}
+		}
+		else
+		{
+			$(NextName).style.display = "block";
+			$(ImgName).src = "images/new/fcloses.gif";
+		}		
+	}
+}
+
+function ShowSFolder(SKID,obj)
+{
+	var TrName = "SFoldertr_"+SaveKindID;
+	if ( $(TrName) )
+	{
+		$(TrName).style.backgroundColor = "";
+		if ($(TrName).cells[0].childNodes.length > 1)
+		{
+			$(TrName).cells[0].childNodes[1].style.display = "none";
+			$(TrName).cells[0].childNodes[2].style.display = "none";
+		}		
+	}
+	obj.style.backgroundColor = "#c1dcfa";
+	if (obj.cells[0].childNodes.length > 1)
+	{
+		obj.cells[0].childNodes[1].style.display = "block";
+		obj.cells[0].childNodes[2].style.display = "block";
+	}
+	SaveKindID = SKID;
+	var NextName = "SFolderNext_" + SKID;
+	var ImgName = "SFolderimg_" + SKID;		
+	if ( !$(ImgName) || $(ImgName).src.indexOf("folder") > 0 ) { return ;}
+	if ( $(ImgName).src.indexOf("fclose") > 0 && CopyType != "FV" )
+	{
+		$(NextName).style.display = "none";
+		$(ImgName).src = "images/new/fopen.gif";		
+	}
+	else
+	{		
+		if ( $(NextName).cells[0].innerHTML == "" || CopyType == "FV" )
+		{
+			xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=CallShareFolder&SaveKindID="+SKID+"&TestModelID="+Library,false);
+			xmlhttp.send();
+			if ( bytes2BSTR(xmlhttp.ResponseBody) != "" )
+			{
+				$(NextName).style.display = "block";
+				$(ImgName).src = "images/new/fclose.gif";
+				$(NextName).cells[0].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			}
+			else
+			{
+				alert("该文件夹下没有试卷或者文件夹，可通过复制、剪切功能将试卷移动到该文件夹下方！");
+			}
+		}
+		else
+		{
+			$(NextName).style.display = "block";
+			$(ImgName).src = "images/new/fclose.gif";
+		}		
+	}
+}
+var FileSaveKindID;
+function ShowRight2(FSKID,own,Obj)
+{	
+	//为鼠标左键移动试卷做准备
+	if(window.event.button==1)
+	{
+		var WinName = "ModelWindow" + Library;		
+		WinName = $(WinName);
+		var obj = "Foldertr_" + FSKID;
+		obj = $(obj);
+		FileSaveKindID = FSKID;
+		//alert(obj.parentNode.outerHTML)
+		if ( obj.parentNode.parentNode )
+		{
+			MoveTable = obj.parentNode.parentNode;
+			MoveRow = obj;
+			onMouseDown = true;
+			$("Library_Content").style.cursor = "move";
+		}
+	}
+	if(Obj != null || (parseInt(window.event.button)%2) ==0)
+	{		
+		var WinName = "ModelWindow" + Library;		
+		WinName = $(WinName);
+		var obj = "Foldertr_" + FSKID;
+		obj = $(obj);
+		if ( type == 'Share' )
+		{	
+			if ( obj )
+			{
+				
+				WinName.childNodes[0].style.display = "block";
+				WinName.childNodes[1].style.display = "none";
+				WinName.childNodes[3].style.display = "block";
+				WinName.childNodes[4].style.display = "block";
+				WinName.childNodes[5].style.display = "block";
+				WinName.childNodes[6].style.display = "block";
+				WinName.childNodes[7].style.display = "block";
+				if ( Library == 2 )
+				{
+					WinName.childNodes[2].style.display = "none";
+				}
+			}
+			else
+			{
+				WinName.childNodes[0].style.display = "none";
+				WinName.childNodes[1].style.display = "block";
+				WinName.childNodes[3].style.display = "none";
+				WinName.childNodes[4].style.display = "none";
+				WinName.childNodes[5].style.display = "none";
+				WinName.childNodes[6].style.display = "block";
+				WinName.childNodes[7].style.display = "block";
+				//WinName.childNodes[8].style.display = "none";
+				if ( Library == 2 )
+				{
+					//WinName.childNodes[2].style.display = "block";
+				}	
+				if ( own == "no" )
+				{
+					WinName.childNodes[2].style.display = "block";
+					WinName.childNodes[6].style.display = "none";
+					WinName.childNodes[7].style.display = "none";
+				}	
+				else
+				{
+					WinName.childNodes[2].style.display = "block";
+				}
+				//WinName.childNodes[WinName.childNodes.length-1].style.display = "none";
+			}
+		}
+		else
+		{
+			WinName.childNodes[0].style.display = "none";
+			WinName.childNodes[1].style.display = "none";
+			WinName.childNodes[6].style.display = "block";
+			WinName.childNodes[7].style.display = "block";
+			var obj = "Foldertr_" + FSKID;
+			obj = $(obj);
+			if (obj.PaperContent=="1" && Library == 1)
+			{
+				WinName.childNodes[2].style.display = "block";
+			}
+			else
+			{
+				WinName.childNodes[2].style.display = "none";
+			}
+			if (obj.KnowledgeID!="0")
+			{
+				WinName.childNodes[8].style.display = "block";
+			}
+			else
+			{
+				//WinName.childNodes[8].style.display = "none";
+			}
+		}
+		WinName.style.display = "block";
+		var x=getX(Obj);
+        var y= getY(Obj);
+		//var x=document.documentElement.scrollLeft + event.x;
+        //var y= event.y;	
+		//if( navigator.appVersion.indexOf("MSIE 6.0") >= 0 )
+	   //{
+		//	  y = document.documentElement.scrollTop + y;
+	   //}
+		WinName.style.left = x;
+		WinName.style.top = y;
+		FileSaveKindID = FSKID;
+		ObjTemp = "Foldertr_" + FSKID;
+		ObjTemp = $(ObjTemp)
+		if ( !ObjTemp )
+		{
+			ObjTemp = "SFoldertr_" + FSKID;
+			ObjTemp = $(ObjTemp)
+		}
+	}
+}
+function Upload()
+{
+	$("ModelWindow1").style.display = "none";
+	$("ModelWindow2").style.display = "none";	
+	CType = "UploadFolder";
+	ShowSaveName();
+}
+function Download()
+{
+	$("ModelWindow1").style.display = "none";
+	$("ModelWindow2").style.display = "none";	
+	CType = "CopyShareFolder";
+	ShowFolderList('GetFolderList',Library);
+	//$("FolderList").childNodes[0].childNodes[0].childNodes[3].style.display = 'block';
+//	if ( Library == 1 )
+//	{
+//		$("FolderList").childNodes[0].childNodes[0].childNodes[0].innerHTML = '下载至个人试卷库';
+//	}
+//	else
+//	{
+//		$("FolderList").childNodes[0].childNodes[0].childNodes[0].innerHTML = '下载至个人模版库';
+//	}	
+}
+function ShowRight3(FSKID,Obj)
+{	
+	//if((parseInt(window.event.button)%2) ==0)
+	//{		
+		var WinName = "FWindow";
+		if ( parseInt(FSKID)==0 )
+		{
+			WinName = "FWindow0";
+		}
+		WinName = $(WinName);		
+		WinName.style.display = "block";
+		var x=getX(Obj);
+        var y= getY(Obj);
+		//var x=document.documentElement.scrollLeft + event.x;
+        //var y= event.y;	
+		//if( navigator.appVersion.indexOf("MSIE 6.0") >= 0 )
+	   //{
+			//  y = document.documentElement.scrollTop + y;
+	   //}
+		WinName.style.left = x;
+		WinName.style.top = y;
+		SaveKindID = FSKID;
+		FileSaveKindID = FSKID;
+		ObjTemp = "Foldertr_" + FSKID;
+		ObjTemp = $(ObjTemp);
+		var MName = "ModelWindow" + Library;
+		$("FWindow").childNodes[3].style.color = $(MName).childNodes[5].style.color;		
+	//}
+}
+function DelSaveKind()
+{
+	if(window.confirm("确实要删除吗？")){
+		var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+		xmlhttp.open("GET","folder.asp?DoType=DelSaveKind&TestModelID="+Library+"&SaveKindID="+FileSaveKindID,false);
+		xmlhttp.send();
+		if(bytes2BSTR(xmlhttp.ResponseBody)=='0'){ObjTemp.parentNode.removeChild(ObjTemp); }
+		else{alert('删除失败！');}
+	}
+	HideWindow();
+}
+function OpenExamInsert()
+{
+	var obj = "Foldertr_" + FileSaveKindID;
+	obj = $(obj);
+	window.open("ExamInsert.asp?SaveKindID="+FileSaveKindID+"&KnowledgeID="+obj.KnowledgeID);
+}
+function OpenPaper(SaveKindID)
+{
+	if (SaveKindID !=null)
+	{window.open("paperlist.asp?SaveKindID="+SaveKindID);}
+	else
+	{window.open("paperlist.asp?SaveKindID="+FileSaveKindID);}
+	HideWindow();
+}
+function ShowButton(obj,next)
+{
+	var Obj;
+	if ( type == 'Share' )
+	{
+		if ( obj.id.indexOf("_") > 0 )
+		{
+			Obj = $(obj.id.substring(0,obj.id.indexOf("_")));
+		}
+		else
+		{
+			Obj = $(obj.id+"_S");
+		}
+	}
+	obj.className = "textclick";
+	if ( type == 'Share' ) { Obj.className = "textclick"; }
+	if ( next == "2" )
+	{
+		obj.previousSibling.className = "text";		
+		if ( type == 'Share' ) { Obj.previousSibling.className = "text"; }
+	}
+	if ( next == "1" )
+	{
+		obj.nextSibling.className = "text";
+		if ( type == 'Share' ) { Obj.nextSibling.className = "text"; }
+	}
+	Library = parseInt(next);
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=CallFolder&SaveKindID=0&TestModelID="+Library,false);
+	xmlhttp.send();
+	$("Library_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	if ( type == "Share" )
+	{
+		xmlhttp.open("GET","folder.asp?DoType=CallShareFolder&SaveKindID=0&TestModelID="+Library,false);
+		xmlhttp.send();
+		$("Library_S_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	}
+}
+function ShowKnowledge(SKindID,obj)
+{
+	//alert(SKindID)
+	if ( Library == 1 && $("PStore").className != "textclick") { Library = 2; }
+	if ( Library == 2 && $("PStore").className == "textclick") { Library = 1; }
+	
+	if (obj)
+	{
+		obj.style.backgroundColor = "#c1dcfa";	
+		var TrName = "Foldertr_"+SaveKindID;	
+		if ( $(TrName) )
+		{
+			$(TrName).style.backgroundColor = "";
+		}
+		TrName = "SFoldertr_"+SaveKindID;
+		if ( $(TrName) )
+		{
+			$(TrName).style.backgroundColor = "";
+			SaveKindID = SKindID;
+			return;
+		}
+	}
+	SaveKindID = SKindID;
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=ShowKnowledge&SaveKindID=" + SKindID + "&TestModelID="+Library,false);
+	xmlhttp.send();	
+	//alert(bytes2BSTR(xmlhttp.ResponseBody))
+	$("KnowledgeTemple_Content").innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+}
+function CheckPublishFolder(SID)
+{
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=CheckPublish&SaveKindID="+SID,false);
+	xmlhttp.send();
+	if (bytes2BSTR(xmlhttp.ResponseBody) == "ok" )
+	{
+		xmlhttp.open("GET","getExamPaper.asp?DoType=SaveSEP&SaveKindID="+SID,false);
+		xmlhttp.send();	
+		xmlhttp.open("GET","getExamPaper.asp?DoType=SavePaper&ShowAnswer=ok&SaveKindID="+SID,false);
+		xmlhttp.send();	
+		xmlhttp.open("GET","getExamPaper.asp?DoType=SavePaper&SaveKindID="+SID,false);
+		xmlhttp.send();	
+	}
+}
+function CopyPaper(CPType)
+{
+	var MName = "ModelWindow" + Library;
+	if ( CPType.indexOf("V") < 0 )
+	{
+		CSaveKindID = FileSaveKindID;
+		CopyType = CPType;
+		var FName = "Foldertr_" + FileSaveKindID;
+		$(FName).cells[0].childNodes[0].style.color = "#FF0000";
+		$(MName).childNodes[5].style.color = "#0f3460";		
+	}
+	else
+	{
+		if ( ( $(MName).style.display == "block" && $(MName).childNodes[5].style.color == "#999999" ) || ( $("FWindow").style.display == "block" && $("FWindow").childNodes[3].style.color == "#999999") )
+		{
+			alert("请先选择试卷并复制或者剪切后再进行此操作！");
+			$(MName).style.display = "none";
+			$("FWindow").style.display = "none";
+			return false;
+		}
+		$(MName).childNodes[5].style.color = "#999999";	
+		if ( CopyType == 'X' )
+		{
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=FolderCut&OSaveKindID=" + CSaveKindID + "&NSaveKindID=" + FileSaveKindID + "&CPType=" + CPType,false);
+			xmlhttp.send();
+			if ( parseInt(4) == 6 || parseInt(4) == 3 )
+			{
+				CheckPublishFolder(CSaveKindID);
+			}
+			var FName = "Foldertr_" + CSaveKindID;
+			$(FName).parentNode.deleteRow($(FName).rowIndex);
+			CopyType = CPType;
+			if ( CPType == "V" )
+			{
+				FName = "Foldertr_" + FileSaveKindID;
+				FName = $(FName).parentNode.parentNode.id;
+				FName = FName.substring(7,FName.length);
+				xmlhttp.open("GET","folder.asp?DoType=CallFolder&SaveKindID="+FName+"&TestModelID="+Library,false);
+				xmlhttp.send();
+				FName = "Foldertr_" + FileSaveKindID;
+				$(FName).parentNode.parentNode.parentNode.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			}
+			else
+			{
+				FName = "Foldertr_" + FileSaveKindID;
+				ShowFolder(FileSaveKindID,$(FName));
+			}
+		}
+		else
+		{
+			var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+			xmlhttp.open("GET","folder.asp?DoType=FolderCopy&OSaveKindID=" + CSaveKindID + "&NSaveKindID=" + FileSaveKindID + "&CPType=" + CPType,false);
+			xmlhttp.send();
+			if ( parseInt(4) == 6 || parseInt(4) == 3 )
+			{
+				CheckPublishFolder(bytes2BSTR(xmlhttp.ResponseBody));
+			}
+			var FName = "Foldertr_" + CSaveKindID;
+			$(FName).cells[0].childNodes[0].style.color = "#0067b4";
+			if ( CPType == "V" )
+			{
+				FName = "Foldertr_" + FileSaveKindID;
+				FName = $(FName).parentNode.parentNode.id;
+				FName = FName.substring(7,FName.length);
+				xmlhttp.open("GET","folder.asp?DoType=CallFolder&SaveKindID="+FName+"&TestModelID="+Library,false);
+				xmlhttp.send();
+				FName = "Foldertr_" + FileSaveKindID;
+				$(FName).parentNode.parentNode.parentNode.innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+			}
+			else
+			{
+				FName = "Foldertr_" + FileSaveKindID;
+				ShowFolder(FileSaveKindID,$(FName));
+			}
+		}
+		CSaveKindID = "";
+		CopyType = "";		
+	}
+	$(MName).style.display = "none";
+	$("FWindow").style.display = "none";
+}
+function ShowSearch()
+{
+	$("SearchNote").style.display = "block";	
+	var x=document.documentElement.scrollLeft + 200;
+	var y= 150;
+	if(navigator.appVersion.match(/6./i)=='6.') 
+   {
+		  y = document.documentElement.scrollTop + y;
+   }
+	$("SearchNote").style.left = x;
+	$("SearchNote").style.top = y;	
+	$("Over").style.height = document.body.offsetHeight;
+	$("Over").style.display = "block";	
+}
+function ChangeDisplay(obj,tid)
+{
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","knowledge.asp?DoType=ChangeDisplay&TitleTypeID="+tid+"&Display="+obj.checked,false);
+	xmlhttp.send();
+	ChangeButton($("banner").childNodes[1],'kdjs');
+}
+function ChangeArea(obj)
+{
+	if ( obj.id == "AreaAll" )
+	{
+		$("AreaM").checked = false;
+		$("AreaG").checked = false;
+	}
+	else
+	{
+		$("AreaAll").checked = false;
+	}
+	ShowTitleNum();
+}
+function ChangeFolderShowType(obj)
+{
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=ChangeShowType&SaveKindID="+obj.savekindid,false);
+	xmlhttp.send();	
+	if ( obj.checked )
+	{
+		obj.nextSibling.style.color = "#004986";
+		var sid = bytes2BSTR(xmlhttp.ResponseBody).split(",");
+		for (i=0;i<sid.length;i++)
+		{
+			xmlhttp.open("GET","getExamPaper.asp?DoType=SaveSEP&SaveKindID="+sid[i],false);
+			xmlhttp.send();	
+			xmlhttp.open("GET","getExamPaper.asp?DoType=SavePaper&ShowAnswer=ok&SaveKindID="+sid[i],false);
+			xmlhttp.send();
+			xmlhttp.open("GET","getExamPaper.asp?DoType=SavePaper&SaveKindID="+sid[i],false);
+			xmlhttp.send();
+		}
+	}
+	else
+	{
+		obj.nextSibling.style.color = "#959595";
+	}	
+}
+function Search()
+{
+	var xmlhttp=new ActiveXObject("Msxml2.xmlhttp");
+	xmlhttp.open("GET","folder.asp?DoType=SearchNote&Note="+$("Note").value,false);
+	xmlhttp.send();
+	$("SearchList").style.display = "block";
+	var x=getX($("LibraryList"))+150;
+	var y=getY($("LibraryList"))+40;
+	$("SearchList").style.left = x;
+	$("SearchList").style.top = y;
+	$("SearchNote").style.display = "none";
+	$("SearchList").childNodes[1].innerHTML = bytes2BSTR(xmlhttp.ResponseBody);
+	SYLatexEngine.RenderNode($("SearchList"));
+}
+var Obj1=''
+document.onmouseup=MUp
+document.onmousemove=MMove
+function MDown(Object){
+Obj1=Object.id
+document.all(Obj1).setCapture()
+pX=event.x-document.all(Obj1).offsetLeft;
+pY=event.y-document.all(Obj1).offsetTop;
+}
+function MMove(){
+if(Obj1!=''){
+document.all(Obj1).style.left=event.x-pX;
+document.all(Obj1).style.top=event.y-pY;
+}
+}
+function MUp(){
+if(Obj1!=''){
+document.all(Obj1).releaseCapture();
+Obj1='';
+}
+}
+function InsertInTitle(objname)
+{
+	$("Title").value = $(objname).innerHTML;
+}
+</script></head>
+
+
+
+
+<body topmargin="0" oncontextmenu="window.event.returnValue=false">
+<div id="ShowK" class="ShowK" style="display: none;"></div>
+<div id="Window" class="Window">
+	<div class="Wtop">
+    	<div class="Wtform">
+        	<div class="Wtftitle">位置选择</div>
+            <img onclick="HideWindow()" src="images/close.gif">
+            <img onclick="FolderType('Add')" style="margin-right:15px;" src="images/new/addfolder.gif">            
+        </div>        
+    </div>
+    <div class="Wbottom">
+    	<div id="List1" class="List1">
+        	
+        </div>
+    </div>
+</div>
+<div id="StyleWindow" class="Window">
+	<div class="Wtop">
+    	<div class="Wtform">
+        	<div class="Wtftitle">题型管理</div>
+            <img onclick="HideWindow()" src="images/close.gif">
+            <img onclick="TitleType('Add')" style="margin-right:15px;" src="images/new/addfolder.gif">            
+        </div>        
+  </div>
+    <div class="Wbottom">
+    	<div id="List2" class="List1">
+        	
+        </div>
+    </div>
+</div>
+<div id="CourseWindow" class="cwindow">
+	
+        	<div onmouseover="ChangeCWBg(this)" title="线性代数" onclick="ChangeCourse(2)" onmouseout="BackCWBg(this)" class="line">线性代数</div>
+            
+        	<div onmouseover="ChangeCWBg(this)" title="概率统计" onclick="ChangeCourse(3)" onmouseout="BackCWBg(this)" class="line">概率统计</div>
+            
+</div>
+<div id="ModelWindow1" class="rwindow"> 
+	<div style="display:none;" onmouseover="ChangeKBg(this)" onclick="Upload()" onmouseout="BackKBg(this)" class="line">上传试卷</div> 
+    <div style="display:none;" onmouseover="ChangeKBg(this)" onclick="Download()" onmouseout="BackKBg(this)" class="line">下载试卷</div>
+    <div onmouseover="ChangeKBg(this)" onclick="OpenPaper()" onmouseout="BackKBg(this)" class="line">打开试卷</div> 
+    <div onmouseover="ChangeKBg(this)" onclick="CopyPaper('X')" onmouseout="BackKBg(this)" class="line">剪切试卷</div>
+    <div onmouseover="ChangeKBg(this)" onclick="CopyPaper('C')" onmouseout="BackKBg(this)" class="line">复制试卷</div>
+    <div onmouseover="ChangeKBg(this)" onclick="CopyPaper('V')" onmouseout="BackKBg(this)" class="line" style="color:#999999;">粘贴试卷</div>
+    <div onmouseover="ChangeKBg(this)" onclick="ChangeFolderName()" onmouseout="BackKBg(this)" class="line">修改名称</div>
+    <div onmouseover="ChangeKBg(this)" onclick="DelSaveKind()" onmouseout="BackKBg(this)" class="line">删除试卷</div>
+    <div onmouseover="ChangeKBg(this)" onclick="OpenExamInsert()" onmouseout="BackKBg(this)" class="line">修改试卷</div>
+</div>
+<div id="FWindow0" class="rwindow">
+    <div onmouseover="ChangeKBg(this);" onclick="AddFolder('First')" onmouseout="BackKBg(this)" class="line">添加文件夹</div>
+</div>
+<div id="FWindow" class="rwindow">
+    <div onmouseover="ChangeKBg(this);" onclick="AddFolder('Same')" onmouseout="BackKBg(this)" class="line">添加同级文件夹</div>
+    <div onmouseover="ChangeKBg(this)" onclick="AddFolder('Next')" onmouseout="BackKBg(this)" class="line">添加下级文件夹</div>
+    <div onmouseover="ChangeKBg(this)" onclick="EditFolder('Edit')" onmouseout="BackKBg(this)" class="line">修改文件夹名称</div> 
+    <div onmouseover="ChangeKBg(this)" onclick="CopyPaper('FV')" onmouseout="BackKBg(this)" class="line" style="color:#999999;">粘贴试卷至该处</div>    
+    <div onmouseover="ChangeKBg(this)" onclick="EditFolder('Delete')" onmouseout="BackKBg(this)" class="line">删除文件夹</div>
+</div>
+<div id="SelectWindow" style="width:40px;" class="rwindow">
+    <div onmouseover="ChangeKBg(this)" onclick="SelectDisplay('All')" onmouseout="BackKBg(this)" class="line">全选</div>
+    <div onmouseover="ChangeKBg(this)" onclick="SelectDisplay('None')" onmouseout="BackKBg(this)" class="line">不选</div>
+</div>
+<div id="AddTitle" class="rwindow" style="display: block;">
+    <div onmouseover="ChangeKBg(this)" onclick="ShowTitleWindow('Add')" onmouseout="BackKBg(this)" class="line">添加标题</div>    
+</div>
+<div id="ModelWindow2" class="rwindow"> 
+	<div style="display:none;" onmouseover="ChangeKBg(this)" onclick="Upload()" onmouseout="BackKBg(this)" class="line">上传模版</div>
+    <div style="display:none;" onmouseover="ChangeKBg(this)" onclick="Download()" onmouseout="BackKBg(this)" class="line">下载模版</div>
+    <div style="display:none;" onmouseover="ChangeKBg(this)" onclick="CopyPaper('X')" onmouseout="BackKBg(this)" class="line">载入模版</div>
+    <div onmouseover="ChangeKBg(this)" onclick="CopyPaper('X')" onmouseout="BackKBg(this)" class="line">剪切模版</div>
+    <div onmouseover="ChangeKBg(this)" onclick="CopyPaper('C')" onmouseout="BackKBg(this)" class="line">复制模版</div>    
+    <div onmouseover="ChangeKBg(this)" onclick="CopyPaper('V')" onmouseout="BackKBg(this)" class="line" style="color:#999999;">粘贴模版</div>
+    <div onmouseover="ChangeKBg(this)" onclick="ChangeFolderName()" onmouseout="BackKBg(this)" class="line">修改名称</div>
+    <div onmouseover="ChangeKBg(this)" onclick="DelSaveKind()" onmouseout="BackKBg(this)" class="line">删除模版</div>
+</div>
+
+<div id="KWindow" class="rwindow">  
+	  
+    <div onmouseover="ChangeKBg(this);ShowRight(KWindow_1,this,'Share')" onmouseout="BackKBg(this)" class="line">添加共享考点</div>
+    
+    <div onmouseover="ChangeKBg(this);ShowRight(KWindow_1,this,'Self')" onmouseout="BackKBg(this)" class="line">添加自建考点</div>
+    
+    <!--<div onmouseover="ChangeKBg(this)" onclick="EditKnowledge('KeepDelete')" onmouseout="BackKBg(this)" class="line">删除(保留试题)</div>-->
+    <div onmouseover="ChangeKBg(this)" onclick="EditKnowledge('CopySelf')" onmouseout="BackKBg(this)" class="line">复制为自建</div>
+</div>
+
+<div id="KWindowz" class="rwindow">
+    <div onmouseover="ChangeKBg(this);ShowRight(KWindow_1,this,'Self')" onmouseout="BackKBg(this)" class="line">添加自建考点</div>
+    
+    <div onmouseover="ChangeKBg(this)" onclick="EditKnowledge('Delete')" onmouseout="BackKBg(this)" class="line">删除考点</div>    
+    <!--<div onmouseover="ChangeKBg(this)" onclick="EditKnowledge('KeepDelete')" onmouseout="BackKBg(this)" class="line">删除(保留试题)</div>-->
+    <div onmouseover="ChangeKBg(this)" onclick="EditKnowledge('CopyShare')" onmouseout="BackKBg(this)" class="line">复制为共享</div>
+</div>
+<div id="KWindow_1" class="rwindow">
+	<div onmouseover="ChangeKBg(this)" onclick="AddKnowledge('Same')" onmouseout="BackKBg(this)" class="line">添加同级考点</div>
+    <div onmouseover="ChangeKBg(this)" onclick="AddKnowledge('Next')" onmouseout="BackKBg(this)" class="line">添加下级考点</div>
+</div>
+<div id="KWindow_0" class="rwindow" style="display: none;">
+	  
+	<div onmouseover="ChangeKBg(this)" onclick="AddKnowledge('First','Share')" onmouseout="BackKBg(this)" class="line">添加共享考点</div>
+    
+    <div onmouseover="ChangeKBg(this)" onclick="AddKnowledge('First','Self')" onmouseout="BackKBg(this)" class="line">添加自建考点</div>
+</div>
+<div id="TWindow" class="rwindow">    
+    <div onmouseover="ChangeKBg(this)" onclick="HideWindow();ShowTitleWindow('Edit')" onmouseout="BackKBg(this)" class="line">修改此题目</div>
+    <div onmouseover="ChangeKBg(this)" onclick="HideWindow();SaveTitleName('Del')" onmouseout="BackKBg(this)" class="line">删除此题目</div>
+</div>
+<div id="TWindow1" class="rwindow">    
+    <div onmouseover="ChangeKBg(this)" onclick="DelTitleInfor()" onmouseout="BackKBg(this)" class="line">删除考点</div>
+</div>
+<div id="MWindow" class="rwindow">    
+    <div onmouseover="ChangeKBg(this)" onclick="SelTitleAreaShow(1,NowKnowledgeID)" onmouseout="BackKBg(this)" class="line">修改考点</div>
+    <div onmouseover="ChangeKBg(this)" onclick="DelTable()" onmouseout="BackKBg(this)" class="line">删除考点</div>
+</div>
+<div id="KnowledgeDetail" style="width:480px;" class="SelTitleArea">
+  <div class="head">
+    <div class="postion"><span class="curr"></span></div>
+  </div>
+  <div class="EditInput">
+  	<input type="hidden" id="KnowledgeDetailID" name="KnowledgeDetailID">
+    <textarea id="KnowledgeDetailEdit" name="KnowledgeDetailEdit" style="display:none;" cols="36" rows="5"></textarea>
+    <iframe id="eWebEditor" src="about:blank" frameborder="0" scrolling="yes" width="450" height="200"></iframe> 
+  </div>
+  <div class="BTArea">
+    <div class="bt" onclick="ChangeNote('KnowledgeDetailEdit');">
+      <div class="L">
+        <div class="R">保存退出</div>
+      </div>
+    </div>    
+    <div class="bt" onclick="HideShow();">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="TitleDetail" class="SelTitleArea">
+  <div class="head">
+    <div class="postion"><span class="curr">标题</span></div>
+  </div>
+  <div class="EditInput">
+    <span id="InsertTitle1">一、选择题（本大题共有5小题，每题只有一个正确选项，每题5分,总共25分）</span>&nbsp;&nbsp;<a href="javascript:InsertInTitle('InsertTitle1')">载入</a><br><br>
+    <span id="InsertTitle2">二、填空题（本大题共有5小题，每题5分,总共25分）</span>&nbsp;&nbsp;<a href="javascript:InsertInTitle('InsertTitle2')">载入</a><br><br>
+    <span id="InsertTitle3">三、解答题（本大题共有5小题，每题5分,总共25分）</span>&nbsp;&nbsp;<a href="javascript:InsertInTitle('InsertTitle3')">载入</a><br><br>
+    <textarea id="Title" name="Title" cols="36" rows="5"></textarea>  
+  </div>
+  <div class="BTArea">
+    <div class="bt" onclick="SaveTitleName();">
+      <div class="L">
+        <div class="R">保存退出</div>
+      </div>
+    </div>    
+    <div class="bt" onclick="HideShow();">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="SearchList" style="width:600px;cursor:pointer;" class="SelTitleArea">
+  <div class="head">
+    <div class="postion">
+    	<div class="curr">搜索结果列表<span style="font-size:12px; color:#FF0000;">(提示：勾选试题组卷，鼠标拖动排序)</span>&nbsp;<a href="javascript:void(0);" onclick="Search()">刷新</a></div>
+        <img class="fclose" onclick="HideWindow()" src="images/new/wclose.gif">      
+    </div>    
+  </div>  
+  <div style="width:560px; padding:5px; margin-top:5px;" class="FolderList">
+  </div>  
+  <div style="width:580px; margin-bottom:10px; margin-top:10px; text-align:center;">
+  	<div onclick="ShowSearchTest()" style="margin-left:230px; _margin-left:60px; float:left;width:80px;" class="bt"><div class="L"><div class="R">试卷预览</div></div></div>
+  	<div onclick="SaveSearchTest()" style=" float:left;width:80px;" class="bt"><div class="L"><div class="R">试卷生成</div></div></div>
+  </div>
+</div>  
+<div id="FDetail" class="SelTitleArea">
+  <div class="head">
+    <div class="postion"><span class="curr">文件夹管理</span></div>
+  </div>
+  <div class="EditInput">
+    <div class="t">名称:</div>
+    <div class="input">
+      <input type="text" id="FolderName" name="FolderName">
+    </div>    
+  </div>
+  <div class="BTArea">
+    <div class="bt" onclick="SaveFolder();">
+      <div class="L">
+        <div class="R">保存退出</div>
+      </div>
+    </div>    
+    <div class="bt" onclick="HideShow();">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="KDetail" class="SelTitleArea">
+  <div class="head">
+    <div class="postion"><span class="curr">考点管理</span></div>
+  </div>
+  <div class="EditInput">
+    <div class="t">名称:</div>
+    <div class="input">
+      <input type="text" id="KnowledgeName" name="KnowledgeName">
+    </div>    
+  </div>
+  <div class="BTArea">
+    <div class="bt" onclick="SaveKnowledge();">
+      <div class="L">
+        <div class="R">保存退出</div>
+      </div>
+    </div>    
+    <div class="bt" onclick="HideShow();">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="SaveName" class="SelTitleArea">
+  <div class="head">
+    <div class="postion"><span class="curr">文件保存</span></div>
+  </div>
+  <div class="EditInput">
+    <div class="t">名称:</div>
+    <div class="input">
+      <input type="text" id="SaveKindName" size="30" name="SaveKindName">
+    </div>    
+  </div>
+  <div class="BTArea">
+    <div class="bt" onclick="SaveKName();">
+      <div class="L">
+        <div class="R">保存退出</div>
+      </div>
+    </div>    
+    <div class="bt" onclick="HideShow();">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="SearchNote" style="width:350px;" class="SelTitleArea">
+  <div class="head">
+    <div class="postion"><span class="curr">搜索</span></div>
+  </div>
+  <div class="EditInput">
+    <div style="float:none; margin-bottom:5px;" class="t">试题标识</div>
+    <div style="float:none; margin-left:20px;" class="input">
+      <input type="text" id="Note" size="40" name="Note">
+    </div>    
+  </div>
+  <div style="padding-left:90px;" class="BTArea">
+    <div class="bt" onclick="Search();">
+      <div class="L">
+        <div class="R">搜索</div>
+      </div>
+    </div>    
+    <div class="bt" onclick="HideShow();">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="TitleType" class="SelTitleArea" style=" width:430px;display:none">
+  <div class="head">
+    <div id="Postion" class="postion"></div>
+  </div>
+  <div class="EditInput">
+  	
+  </div>
+  <div class="BTArea">
+    <div class="bt" onclick="SaveTitleType()">
+      <div class="L">
+        <div class="R">保&nbsp;&nbsp;存</div>
+      </div>
+    </div>
+    <div class="bt" onclick="ExitTitleType()">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="SelTitleArea" class="SelTitleArea" style=" width:380px;display:none">
+  <div onmousedown="MDown(this.parentNode)" class="head">
+    <div id="Postion" class="postion"></div>
+  </div>
+    
+  <textarea id="PaperContent" name="PaperContent" style="display:none;"></textarea>
+  <div class="EditInput">
+  	<div class="t">题型</div>
+    <div class="input">
+      <select onchange="ShowTitleNum()" id="TitleTypeID" name="TitleTypeID"><option value="1" base="1">单选题</option><option value="2" base="2">填空题</option><option value="5" base="3">计算题</option><option value="7" base="3">应用题</option><option value="8" base="3">综合题</option><option value="9" base="3">证明题</option></select>
+    </div>
+    <div class="t">难度</div>
+    <div class="input">
+      <select id="LevelID" onchange="ShowTitleNum()" name="LevelID">
+        <option value="1">易</option>
+        <option value="2">中下</option>
+        <option value="3">中</option>
+        <option value="4">中上</option>
+        <option value="5">难</option>
+      </select>
+    </div>
+    <div class="t">题数</div>
+    <div id="ShowSelectTitleNum" class="input">
+      <select id="SelectTitleNum">
+        
+        <option value="1">1</option>
+        
+        <option value="2">2</option>
+        
+        <option value="3">3</option>
+        
+        <option value="4">4</option>
+        
+        <option value="5">5</option>
+        
+        <option value="6">6</option>
+        
+        <option value="7">7</option>
+        
+        <option value="8">8</option>
+        
+        <option value="9">9</option>
+        
+        <option value="10">10</option>
+        
+      </select>
+    </div>
+    <div class="t">分数</div>
+    <div class="input">   
+      <input type="text" id="TitleScroe" size="3" name="TitleScroe" value="1">
+    </div>
+    <div id="TitleNumShow" style="width:360px; margin-top:15px; height:19px; border:1px solid #c2d7e3; background-color:#e7f1f7; text-align:center; padding-top:6px;"></div>
+  </div>
+  <div class="BTArea">
+    <div class="bt" onclick="SaveTitle('SaveExit')">
+      <div class="L">
+        <div class="R">保存退出</div>
+      </div>
+    </div>
+    <div class="bt" onclick="SaveTitle('SaveNext')">
+      <div class="L">
+        <div class="R">继续选题</div>
+      </div>
+    </div>
+    <div class="bt" onclick="SelTitleAreaShow(0)">
+      <div class="L">
+        <div class="R">取&nbsp;&nbsp;消</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="Over" class="Over"></div>
+<div class="layout">
+	<div style="background-image:url(images/top4.jpg);" class="logobgt">
+        <div class="text1">
+            <span>高等数学</span>
+            
+          <span id="CourseName" onclick="ShowCourse()" class="blue1">课程<img src="images/xsj.gif"></span>
+            
+        </div>
+  </div>
+</div>
+<div class="layout" style=" border:1px solid #116faf; width:998px; background: #e8f0f7;">
+  <div id="banner" class="banner">
+    
+    <div onclick="ChangeButton(this,'stzj')" class="bbuttonc">自组试卷</div>
+    
+    <!--<div onclick="ChangeButton(this,'zxzj')" class="bbutton">试题组卷</div>--> 
+    
+    <div onclick="ChangeButton(this,'gxsj')" class="bbutton">试卷资源</div>
+    
+    <div class="bbutton">帮&nbsp;&nbsp;助</div>
+  </div>
+  <div id="Knowledge" style="display:none;" class="knowledge">
+  	<table width="980" background="images/ktopbg.gif" border="0" cellspacing="0" cellpadding="0">
+      <tbody><tr height="24" style="">
+        <td style="border-right:1px solid #99c6f8;border-bottom:1px solid #99c6f8">
+        	<img id="WidthImg" class="krimg" onclick="ChangeWidth(this)" src="images/ktopleft.gif" width="22" height="20">
+            <div class="klright"><input id="Share" checked="checked" onclick="ShowStyleChange()" type="checkbox"><img src="images/new/sharefolder.gif">&nbsp;共享考点&nbsp;&nbsp;<input id="Self" checked="checked" onclick="ShowStyleChange()" type="checkbox"><img src="images/new/selffolder.gif">&nbsp;自建考点</div>
+            <div class="klleft">考点名称</div>
+        </td>
+        <td width="600" style="border-bottom:1px solid #99c6f8">        	
+            <div id="TableName" class="krleft">考点名称</div>
+        </td>
+      </tr>
+    </tbody></table>
+    <div id="KnowledgeBuilding_Content" onmousedown="ShowRight(KWindow_0)" class="List1" onselectstart="return false">        	
+        
+    </div>
+  </div>
+  <div id="LibraryList" class="LibraryList">
+  	<div id="Library" style="display:none;" class="List Lleft">
+  		<div class="head">
+          <div id="PStore" onclick="ShowButton(this,'1')" class="textclick">
+          	<div class="tleft"></div>
+            <div class="tmiddle">试卷库</div>
+            <div class="tright"></div>
+          </div> 
+          
+        </div>        
+        <div id="Library_Content" class="LibraryContent" style="overflow-y:auto;">
+       	</div>
+    </div>
+	<div id="KnowledgeBuilding" class="Side">
+        <div class="column1">
+        	
+        	<div class="c1left">考点名称</div>                       
+        </div>        
+        <div id="KnowledgeBuilding_Content1" onmousedown="ShowRight(KWindow_0)" class="List1" onselectstart="return false">        	
+        <table id="KB_0" cellspacing="0" cellpadding="0"> 
+            
+          <tbody><tr id="tr_1" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(1,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_1" src="images/new/fopen.gif">&nbsp;函数【550】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,1)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_1" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_2" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(2,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_2" src="images/new/fopen.gif">&nbsp;极限【997】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_2" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_3" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(3,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_3" src="images/new/fopen.gif">&nbsp;连续【514】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_3" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_5" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(5,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_5" src="images/new/fopen.gif">&nbsp;导数与微分【2102】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,5)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_5" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_8" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(8,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_8" src="images/new/fopen.gif">&nbsp;微分中值定理【858】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,8)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_8" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_11" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(11,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_11" src="images/new/fopen.gif">&nbsp;导数的应用【727】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,11)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_11" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_13" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(13,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_13" src="images/new/fopen.gif">&nbsp;不定积分【1190】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,13)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_13" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_15" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(15,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_15" src="images/new/fopen.gif">&nbsp;定积分【1558】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,15)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_15" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_17" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(17,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_17" src="images/new/fopen.gif">&nbsp;定积分的应用【736】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,17)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_17" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_521" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(521,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_521" src="images/new/fopen.gif">&nbsp;向量代数【532】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,521)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_521" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_522" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(522,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_522" src="images/new/fopen.gif">&nbsp;空间解析几何【729】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,522)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_522" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_523" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(523,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_523" src="images/new/fopen.gif">&nbsp;多元函数的概念、极限与连续【211】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,523)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_523" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_524" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(524,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_524" src="images/new/fopen.gif">&nbsp;多元函数的微分【1478】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,524)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_524" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_525" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(525,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_525" src="images/new/fopen.gif">&nbsp;多元函数偏导数应用【334】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,525)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_525" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_526" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(526,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_526" src="images/new/fopen.gif">&nbsp;二重积分【903】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,526)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_526" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_527" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(527,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_527" src="images/new/fopen.gif">&nbsp;三重积分【776】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,527)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_527" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_528" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(528,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_528" src="images/new/fopen.gif">&nbsp;曲线积分【781】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,528)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_528" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_529" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(529,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_529" src="images/new/fopen.gif">&nbsp;曲面积分【618】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,529)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_529" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_530" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(530,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_530" src="images/new/fopen.gif">&nbsp;常数项级数【661】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,530)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_530" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_531" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(531,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_531" src="images/new/fopen.gif">&nbsp;幂级数【878】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,531)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_531" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_532" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(532,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_532" src="images/new/fopen.gif">&nbsp;傅里叶级数【311】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,532)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_532" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_533" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(533,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_533" src="images/new/fopen.gif">&nbsp;微分方程【1498】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,533)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_533" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_1708" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(1708,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_1708" src="images/new/fopen.gif">&nbsp;题型分析综合练习【851】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,1708)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_1708" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_1806" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(1806,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_1806" src="images/new/fopen.gif">&nbsp;考研数学真题【688】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,1806)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_1806" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		    
+          <tr id="tr_2205" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onclick="ShowNext(2205,1)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1">  
+            	
+                <div class="Ktitle"><img id="img_2205" src="images/new/fopen.gif">&nbsp;课后习题【1205】
+                </div>
+                        </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2205)">选&nbsp;题</div></td>
+          </tr>           
+          <tr id="Next_2205" class="next">
+          	<td colspan="2"></td>
+          </tr>
+          		 
+           <tr id="tr_2653" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·测试1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2653)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2654" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·函数单元测试【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2654)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2655" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2015-2016上【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2655)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2656" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2656)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2657" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·123456【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2657)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2658" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·ysp【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2658)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2659" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·13【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2659)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2660" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·新建文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2660)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2661" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·ysp【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2661)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2662" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·常微分方程客观题1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2662)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2663" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·张鸿雁【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2663)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2665" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·123456【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2665)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2666" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章  函数与极限【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2666)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2667" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章01【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2667)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2668" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章02【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2668)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2669" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章03【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2669)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2670" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·试卷A模版12【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2670)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2671" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2671)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2672" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高数上一单元01【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2672)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2673" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·函数单元测试卷01-001【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2673)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2674" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·12【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2674)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2675" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·杨淑平共享文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2675)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2676" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·函数单元测试卷01-001【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2676)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2677" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2015-10-28-0【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2677)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2678" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·测试-1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2678)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2679" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2679)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2680" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章02【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2680)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2681" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章03【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2681)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2682" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·测试版1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2682)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2683" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·10.28.1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2683)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2684" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·函数 极限 连续2【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2684)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2685" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·函数 极限 连续1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2685)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2686" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·10.281【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2686)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2687" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·lc【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2687)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2688" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·新建文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2688)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2689" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·lc【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2689)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2690" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·liucheng【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2690)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2691" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·新建文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2691)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2692" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·新建文件夹1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2692)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2694" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·李小爱共享文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2694)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2695" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章模板1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2695)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2696" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·ceshi1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2696)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2697" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1234【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2697)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2698" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·222【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2698)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2699" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·190【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2699)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2700" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2700)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2701" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·12345【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2701)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2702" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·xiao111【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2702)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2703" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1-1(1)【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2703)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2704" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1-1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2704)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2705" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·test【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2705)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2706" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·函数单元测试卷01-001【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2706)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2707" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·李小爱共享文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2707)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2708" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·杨淑平共享文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2708)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2709" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高数第一章测试卷【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2709)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2710" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·zhang002【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2710)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2711" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学单元测试一【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2711)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2712" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·刘诚【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2712)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2713" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·111【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2713)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2714" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2714)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2716" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第二章单元测试【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2716)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2717" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·解析几何【14】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2717)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2718" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·解析几何2【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2718)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2719" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第二章补考【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2719)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2720" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第二单元测试【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2720)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2721" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·定积分【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2721)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2722" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第三章测试1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2722)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2725" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第二章【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2725)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2726" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·张鸿雁【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2726)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2727" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·12.29【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2727)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2729" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·几何2【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2729)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2730" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·几何3【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2730)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2731" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·极限与连续2015【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2731)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2732" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学上2015【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2732)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2733" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学（上）2015【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2733)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2734" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·多元函数微分学2016【2】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2734)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2735" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·新建文件夹【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2735)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2737" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·5.1.1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2737)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2739" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·多元微分学【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2739)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_2740" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·多元微分学【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,2740)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3396" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·123【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3396)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3397" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第一章2套【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3397)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3398" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第一章【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3398)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3399" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2016高数第一章测试6【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3399)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3400" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章测试（A）【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3400)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3401" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高等数学第一章测试A【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3401)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3404" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·A1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3404)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3408" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2016高等数学第二章测试卷【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3408)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3409" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·微分方程试题【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3409)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3410" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·11111【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3410)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3411" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·111【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3411)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3416" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·02【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3416)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3417" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2016高数4.1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3417)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3418" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·4.1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3418)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3423" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2016无穷级数1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3423)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3424" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1111111【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3424)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3425" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·新建文件夹444【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3425)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3426" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·2222【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3426)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3427" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·1【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3427)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3428" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·线性代数【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3428)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3429" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·wuqiongjishu【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3429)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3430" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·第六章测试【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3430)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3431" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·algebra【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3431)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3435" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·高数C(二）共享【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3435)">选&nbsp;题</div></td>
+          </tr>
+          
+           <tr id="tr_3438" onmouseup="TMoveRow(this)" onmousedown="ShowRight(KWindow,this)" onmouseover="ChangeBg(this)" onmouseout="BackBg(this)">
+            <td class="td1"> 
+            	
+                <div class="Ktitle1">·测试2【0】
+                </div>
+                         </td>
+            <td class="td2"><div class="LLDRight" onclick="SelTitleAreaShow(1,3438)">选&nbsp;题</div></td>
+          </tr>
+                      
+        </tbody></table>
+        </div>
+      </div>
+  </div>
+    <div id="KBuilding" class="KnowledgeBuilding">
+      <!--<div id="File" style="display:none;" class="Side">
+      	<div class="column2">        	
+            <h1>文件夹内存放的试卷</h1>            
+        </div>
+        <div id="File_Content" class="List2">
+          <div id="File_Content_1" class="List2_1">
+                <table id="Files" width="100%" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td class="norecord">通过点击右方菜单查看其所包含试卷！</td>
+                  </tr>                  
+                </table>
+           </div>                    
+        </div>
+      </div>-->
+      <div id="KnowledgeTemple" class="Side">      	
+      	<div class="column2">
+        	<img id="ImgWidth" style="float:left; margin-left:4px; margin-top:2px; cursor:pointer" onclick="ChangeWidth(this)" src="images/ktopleft.gif" width="22" height="20">
+            <h1>考点模板</h1>            
+            <div style="float:left; width:80px;" class="EditBT">
+            	<div onclick="DelAllTable(1)" style="width:40px;" class="bt"><div class="L"><div class="R">清空</div></div></div>
+            </div>
+        	<div class="EditBT">
+              <div onclick="ShowTitleWindow('Add')" class="bt"><div class="L"><div class="R">添加大标题</div></div></div> 
+              
+              	<div id="SNButton1" onclick="ShowSaveName()" class="bt"><div class="L"><div class="R">试卷生成</div></div></div>
+              
+            </div>
+        </div>
+        <div id="KnowledgeTemple_Content" class="List2" onselectstart="return false">
+          	<table style="border-bottom:1px solid #9bc6fd;" width="100%" cellspacing="0" cellpadding="0">
+              <tbody><tr>
+                <td class="td1" style="width:60%;text-align:center;color:#00469e;" bgcolor="#d6e8fc">【名称】</td>
+                <td class="td2" style="width:10%;" bgcolor="#d6e8fc">【题型】</td>
+                <td class="td2" style="width:10%;" bgcolor="#d6e8fc">【难度】</td>
+                <td class="td2" style="width:10%;" bgcolor="#d6e8fc">【题量】</td>
+                <td class="td2" style="width:10%;" bgcolor="#d6e8fc">【总分】</td>
+              </tr>
+            </tbody></table>
+            <div id="KnowledgeTemple_Content_1" onmousedown="ShowRight1(AddTitle)" class="List2_1">
+            	<table id="KModels" width="100%" cellspacing="0" cellpadding="0">
+                	<tbody><tr>
+                    	<td colspan="5" class="norecord">通过考点建设栏目右侧的“选题”按钮即可进行考点选择!右键可添加题目！</td>
+                    </tr>
+                </tbody></table>
+            </div>
+            <table id="KModels_Result" style="border-top:1px solid #9bc6fd;" width="100%" cellspacing="0" cellpadding="0">
+              <tbody><tr>
+                <td class="td1" bgcolor="#d6e8fc"><span class="bold"><span class="bold">统计：</span></span></td>
+                <td class="td2" bgcolor="#d6e8fc">【难度】<span id="KLevel" class="red">0</span></td>
+                <td class="td2" bgcolor="#d6e8fc">【题量】<span id="KExamNum" class="red">0</span></td>
+                <td class="td2" bgcolor="#d6e8fc">【总分】<span id="KTotalNum" class="red">0</span></td>
+              </tr>
+            </tbody></table>
+        </div>
+      </div>
+      <!--<div id="TestTemple" style="display:none;" class="Side">      	
+      	<div class="column2">
+        	<img id="ImgWidth" style="float:left; margin-left:4px; margin-top:2px; cursor:pointer" onclick="ChangeWidth(this)" src="images/ktopleft.gif" width="22" height="20" />
+            <h1>试题模板</h1>            
+            <div style="float:left; width:80px;" class="EditBT">
+            	<div onclick="DelAllTable(1)" style="width:40px;" class="bt"><div class="L"><div class="R">清空</div></div></div>
+            </div>
+        	<div class="EditBT">
+              <div id="SNButton1" onclick="ShowFolderList('GetFolderList',1)" class="bt"><div class="L"><div class="R">试卷生成</div></div></div>
+              <div onclick="ShowSearch()" class="bt"><div class="L"><div class="R">标识组卷</div></div></div>
+            </div>
+        </div>
+        <div id="TestTemple_Content" class="List2">
+          	<table style="border-bottom:1px solid #9bc6fd;" width="100%" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="td1" style="width:70%;text-align:center;color:#00469e;" bgcolor="#d6e8fc">【题目】</td>
+                <td class="td2" style="width:10%;" bgcolor="#d6e8fc">【题型】</td>
+                <td class="td2" style="width:10%;" bgcolor="#d6e8fc">【难度】</td>
+                <td class="td2" style="width:10%;" bgcolor="#d6e8fc">【分数】</td>
+              </tr>
+            </table>
+            <div id='TestTemple_Content_1' onmousedown='ShowRight1(AddTitle)' class='List2_1'>
+            	<table id='TModels' width='100%' cellspacing='0' cellpadding='0'>
+                	<tr>
+                    	<td colspan="4" class="norecord">通过考点建设栏目右侧的链接进入考点选题添加!右键可添加题目！</td>
+                    </tr>
+                </table>
+            </div>
+            <table id="Test_Result" style="border-top:1px solid #9bc6fd;" width="100%" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="td1" bgcolor="#d6e8fc"><span class="bold">统计：</span></td>
+                <td class="td2" bgcolor="#d6e8fc">【难度】<span id="TLevel" class="red">0</span></td>
+                <td class="td2" bgcolor="#d6e8fc">【题量】<span id="TExamNum" class="red">0</span></td>
+                <td class="td2" bgcolor="#d6e8fc">【总分】<span id="TTotalNum" class="red">0</span></td>
+              </tr>
+            </table>
+        </div>
+      </div>-->
+      <div id="Library_S" class="List Lleft" style="border:none; display:none; width:530px;">
+      	<div class="sharehead" style="width:528px;">
+          <div class="head" style="width:528px;">              
+              <div id="PStore_S" onclick="ShowButton(this,'1')" class="textclick">
+                <div class="tleft"></div>
+                
+                <div class="tmiddle">资源库</div>
+                
+                <div class="tright"></div>
+              </div>  
+              
+          </div> 
+        </div>       
+        <div id="Library_S_Content" class="LibraryContent" style="width:524px; height:496px; overflow-y:auto;">
+       	</div>
+    </div>
+  </div>
+</div>
+
+<input id="SY_complete" value="" type="hidden">
+
+<script id="SYMath.js" language="javascript" src="../SYEditor/plugin/MathType/Server/SYMath.js"></script><script id="SYCanvas.js" src="http://202.197.71.136/xlxt/syeditor/plugin/WebGes/JS/SYCanvas.js"></script><script id="SYMathRender" src="http://202.197.71.136/xlxt/syeditor/plugin/mathtype/server/MathEngine.js"></script><iframe src="about:SYBrowser" style="width: 0px; height: 0px; visibility: hidden;"></iframe></body></html>
